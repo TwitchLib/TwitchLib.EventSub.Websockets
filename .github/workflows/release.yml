@@ -1,18 +1,16 @@
-name: Release Preview Nuget Package
+name: Release Nuget Package
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ main ]
 
 jobs:
-  release-preview:
-   if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]')"
+  release:
+   if: "contains(toJSON(github.event.commits.*.message), '[Release]')"
    runs-on: ubuntu-latest
 
    steps:
    - uses: actions/checkout@v3
-   - uses: benjlevesque/short-sha@v2.1
-     id: short-sha
    - name: Setup .NET
      uses: actions/setup-dotnet@v3
      with:
@@ -23,6 +21,6 @@ jobs:
    - name: Build TwitchLib.EventSub.Websockets
      run: dotnet build -c Release --no-restore
    - name: Pack TwitchLib.EventSub.Websockets
-     run: dotnet pack TwitchLib.EventSub.Websockets.sln -v normal -c Release -o nugets --no-build --version-suffix "preview-${{ steps.short-sha.outputs.sha }}"
+     run: dotnet pack TwitchLib.EventSub.Websockets.sln -v normal -c Release -o nugets --no-build
    - name: Push to Nuget
      run: dotnet nuget push "./nugets/*.nupkg" -k ${{ secrets.API_NUGET_TOKEN }} -s https://api.nuget.org/v3/index.json
