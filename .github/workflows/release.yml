@@ -1,0 +1,26 @@
+name: Release Nuget Package
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  release:
+   if: "contains(toJSON(github.event.commits.*.message), '[Release]')"
+   runs-on: ubuntu-latest
+
+   steps:
+   - uses: actions/checkout@v3
+   - name: Setup .NET
+     uses: actions/setup-dotnet@v3
+     with:
+        dotnet-version: 7.0.x
+        dotnet-quality: preview
+   - name: Restore dependencies
+     run: dotnet restore
+   - name: Build TwitchLib.EventSub.Websockets
+     run: dotnet build -c Release --no-restore
+   - name: Pack TwitchLib.EventSub.Websockets
+     run: dotnet pack TwitchLib.EventSub.Websockets.sln -v normal -c Release -o nugets --no-build
+   - name: Push to Nuget
+     run: dotnet nuget push "./nugets/*.nupkg" -k ${{ secrets.API_NUGET_TOKEN }} -s https://api.nuget.org/v3/index.json
