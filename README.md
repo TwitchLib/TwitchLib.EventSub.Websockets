@@ -123,5 +123,5 @@ namespace TwitchLib.EventSub.Websockets.Test
 ```
 
 Alternatively you can also just clone the examples:
-- .NET Framework 4.8 https://github.com/TwitchLib/TwitchLib.EventSub.Websockets/tree/master/TwitchLib.EventSub.Websockets.Example.NetStandard
-- .NET 6 -> https://github.com/TwitchLib/TwitchLib.EventSub.Websockets/tree/master/TwitchLib.EventSub.Websockets.Example
+- .NET Framework 4.8 https://github.com/TwitchLib/TwitchLib.EventSub.Websockets/tree/main/TwitchLib.EventSub.Websockets.Example.NetStandard
+- .NET 6 -> https://github.com/TwitchLib/TwitchLib.EventSub.Websockets/tree/main/TwitchLib.EventSub.Websockets.Example
