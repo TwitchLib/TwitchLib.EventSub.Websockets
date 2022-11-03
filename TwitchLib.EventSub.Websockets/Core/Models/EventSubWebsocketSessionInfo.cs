@@ -1,13 +1,16 @@
-﻿namespace TwitchLib.EventSub.Websockets.Core.Models;
+﻿using System;
 
-public class EventSubWebsocketSessionInfo
+namespace TwitchLib.EventSub.Websockets.Core.Models
 {
-    public string Id { get; set; }
-    public string Status { get; set; }
-    public string DisconnectReason { get; set; }
-    public int? KeepaliveTimeoutSeconds { get; set; }
-    public string ReconnectUrl { get; set; }
-    public DateTime ConnectedAt { get; set; }
-    public DateTime? DisconnectedAt { get; set; }
-    public DateTime? ReconnectingAt { get; set; }
+    public class EventSubWebsocketSessionInfo
+    {
+        public string Id { get; set; }
+        public string Status { get; set; }
+        public string DisconnectReason { get; set; }
+        public int? KeepaliveTimeoutSeconds { get; set; }
+        public string ReconnectUrl { get; set; }
+        public DateTime ConnectedAt { get; set; }
+        public DateTime? DisconnectedAt { get; set; }
+        public DateTime? ReconnectingAt { get; set; }
+    }
 }

@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.EventSub.Websocke
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchLib.EventSub.Websockets.Example", "TwitchLib.EventSub.Websockets.Example\TwitchLib.EventSub.Websockets.Example.csproj", "{24842EDD-7841-4EEC-98DE-08E9ACBBFCBD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchLib.EventSub.Websockets.Example.NetStandard", "TwitchLib.EventSub.Websockets.Example.NetStandard\TwitchLib.EventSub.Websockets.Example.NetStandard.csproj", "{0168680F-D8C2-44E6-8666-6724FCED8398}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{24842EDD-7841-4EEC-98DE-08E9ACBBFCBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24842EDD-7841-4EEC-98DE-08E9ACBBFCBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24842EDD-7841-4EEC-98DE-08E9ACBBFCBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0168680F-D8C2-44E6-8666-6724FCED8398}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0168680F-D8C2-44E6-8666-6724FCED8398}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0168680F-D8C2-44E6-8666-6724FCED8398}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0168680F-D8C2-44E6-8666-6724FCED8398}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

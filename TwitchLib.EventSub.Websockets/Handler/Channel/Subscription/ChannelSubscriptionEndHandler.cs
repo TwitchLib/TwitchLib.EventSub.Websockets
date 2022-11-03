@@ -1,35 +1,37 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using TwitchLib.EventSub.Core.SubscriptionTypes.Channel;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 using TwitchLib.EventSub.Websockets.Core.Handler;
 using TwitchLib.EventSub.Websockets.Core.Models;
 
-namespace TwitchLib.EventSub.Websockets.Handler.Channel.Subscription;
-
-/// <summary>
-/// Handler for 'channel.subscription.end' notifications
-/// </summary>
-public class ChannelSubscriptionEndHandler : INotificationHandler
+namespace TwitchLib.EventSub.Websockets.Handler.Channel.Subscription
 {
-    /// <inheritdoc />
-    public string SubscriptionType => "channel.subscription.end";
-
-    /// <inheritdoc />
-    public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
+    /// <summary>
+    /// Handler for 'channel.subscription.end' notifications
+    /// </summary>
+    public class ChannelSubscriptionEndHandler : INotificationHandler
     {
-        try
-        {
-            var data = JsonSerializer.Deserialize<EventSubNotification<ChannelSubscriptionEnd>>(jsonString.AsSpan(), serializerOptions);
+        /// <inheritdoc />
+        public string SubscriptionType => "channel.subscription.end";
 
-            if (data is null)
-                throw new InvalidOperationException("Parsed JSON cannot be null!");
-
-            client.RaiseEvent("ChannelSubscriptionEnd", new ChannelSubscriptionEndArgs { Notification = data });
-        }
-        catch (Exception ex)
+        /// <inheritdoc />
+        public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
         {
-            client.RaiseEvent("ErrorOccurred", new ErrorOccuredArgs { Exception = ex, Message = $"Error encountered while trying to handle {SubscriptionType} notification! Raw Json: {jsonString}" });
+            try
+            {
+                var data = JsonSerializer.Deserialize<EventSubNotification<ChannelSubscriptionEnd>>(jsonString.AsSpan(), serializerOptions);
+
+                if (data is null)
+                    throw new InvalidOperationException("Parsed JSON cannot be null!");
+
+                client.RaiseEvent("ChannelSubscriptionEnd", new ChannelSubscriptionEndArgs { Notification = data });
+            }
+            catch (Exception ex)
+            {
+                client.RaiseEvent("ErrorOccurred", new ErrorOccuredArgs { Exception = ex, Message = $"Error encountered while trying to handle {SubscriptionType} notification! Raw Json: {jsonString}" });
+            }
         }
     }
 }

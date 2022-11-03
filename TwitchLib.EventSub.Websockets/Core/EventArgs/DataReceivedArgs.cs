@@ -1,6 +1,7 @@
-﻿namespace TwitchLib.EventSub.Websockets.Core.EventArgs;
-
-internal class DataReceivedArgs : System.EventArgs
+﻿namespace TwitchLib.EventSub.Websockets.Core.EventArgs
 {
-    public string Message { get; internal set; }
+    internal class DataReceivedArgs : System.EventArgs
+    {
+        public string Message { get; internal set; }
+    }
 }
