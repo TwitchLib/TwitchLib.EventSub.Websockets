@@ -90,7 +90,7 @@ namespace TwitchLib.EventSub.Websockets
         public event EventHandler<ChannelModeratorArgs> ChannelModeratorAdd;
         /// <summary>
         /// Event that triggers on "channel.moderator.remove" notifications
-        /// </summary
+        /// </summary>
         public event EventHandler<ChannelModeratorArgs> ChannelModeratorRemove;
 
         /// <summary>
