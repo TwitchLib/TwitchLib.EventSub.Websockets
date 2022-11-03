@@ -1,26 +1,28 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
 using TwitchLib.EventSub.Websockets.Core.Handler;
 using TwitchLib.EventSub.Websockets.Core.Models;
 
-namespace TwitchLib.EventSub.Websockets.Handler;
-
-/// <summary>
-/// Handler for 'revocation' notifications
-/// </summary>
-public class RevocationHandler : INotificationHandler
+namespace TwitchLib.EventSub.Websockets.Handler
 {
-    /// <inheritdoc />
-    public string SubscriptionType => "revocation";
-
-    /// <inheritdoc />
-    public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
+    /// <summary>
+    /// Handler for 'revocation' notifications
+    /// </summary>
+    public class RevocationHandler : INotificationHandler
     {
-        var data = JsonSerializer.Deserialize<EventSubNotification<object>>(jsonString.AsSpan(), serializerOptions);
+        /// <inheritdoc />
+        public string SubscriptionType => "revocation";
 
-        if (data is null)
-            throw new InvalidOperationException("Parsed JSON cannot be null!");
+        /// <inheritdoc />
+        public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
+        {
+            var data = JsonSerializer.Deserialize<EventSubNotification<object>>(jsonString.AsSpan(), serializerOptions);
 
-        client.RaiseEvent("Revocation", new RevocationArgs { Notification = data });
+            if (data is null)
+                throw new InvalidOperationException("Parsed JSON cannot be null!");
+
+            client.RaiseEvent("Revocation", new RevocationArgs { Notification = data });
+        }
     }
 }

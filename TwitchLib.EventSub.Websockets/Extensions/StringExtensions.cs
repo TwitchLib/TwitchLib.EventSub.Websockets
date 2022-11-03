@@ -1,45 +1,53 @@
-﻿namespace TwitchLib.EventSub.Websockets.Extensions;
+﻿using System;
+using System.Linq;
 
-/// <summary>
-/// Extension methods for string
-/// </summary>
-public static class StringExtensions
+namespace TwitchLib.EventSub.Websockets.Extensions
 {
     /// <summary>
-    /// Converts the input string to snake case
-    /// <para>e.g. "UserName" => "user_name"</para>
+    /// Extension methods for string
     /// </summary>
-    /// <param name="input">input string to be converted to snake case</param>
-    /// <returns>input string as snake case</returns>
-    public static string ToSnakeCase(this string input)
+    public static class StringExtensions
     {
-        if (string.IsNullOrWhiteSpace(input))
+        /// <summary>
+        /// Converts the input string to snake case
+        /// <para>e.g. "UserName" => "user_name"</para>
+        /// </summary>
+        /// <param name="input">input string to be converted to snake case</param>
+        /// <returns>input string as snake case</returns>
+        public static string ToSnakeCase(this string input)
         {
-            return string.Empty;
-        }
-        
-        input = input.Trim();
-        var upperCaseLength = input.Where((c, i) => c is >= 'A' and <= 'Z' && i != 0).Count();
-
-        var bufferSize = input.Length + upperCaseLength;
-        Span<char> buffer = stackalloc char[bufferSize];
-        var bufferPosition = 0;
-        var namePosition = 0;
-        while (bufferPosition < buffer.Length)
-        {
-            if (namePosition > 0 && input[namePosition] >= 'A' && input[namePosition] <= 'Z')
+            if (string.IsNullOrWhiteSpace(input))
             {
-                buffer[bufferPosition] = '_';
-                buffer[bufferPosition + 1] = input[namePosition];
-                bufferPosition += 2;
-                namePosition++;
-                continue;
+                return string.Empty;
             }
-            buffer[bufferPosition] = input[namePosition];
-            bufferPosition++;
-            namePosition++;
-        }
+        
+            input = input.Trim();
+            var upperCaseLength = input.Where((c, i) => c >= 'A' && c <= 'Z' && i != 0).Count();
 
-        return new string(buffer).ToLower();
+            var bufferSize = input.Length + upperCaseLength;
+            Span<char> buffer = stackalloc char[bufferSize];
+            var bufferPosition = 0;
+            var namePosition = 0;
+            while (bufferPosition < buffer.Length)
+            {
+                if (namePosition > 0 && input[namePosition] >= 'A' && input[namePosition] <= 'Z')
+                {
+                    buffer[bufferPosition] = '_';
+                    buffer[bufferPosition + 1] = input[namePosition];
+                    bufferPosition += 2;
+                    namePosition++;
+                    continue;
+                }
+                buffer[bufferPosition] = input[namePosition];
+                bufferPosition++;
+                namePosition++;
+            }
+
+#if NETSTANDARD2_1_OR_GREATER
+            return new string(buffer).ToLower();
+#else
+            return new string(buffer.ToArray()).ToLower();
+#endif
+        }
     }
 }

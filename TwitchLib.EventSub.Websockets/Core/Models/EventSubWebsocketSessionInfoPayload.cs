@@ -1,6 +1,7 @@
-﻿namespace TwitchLib.EventSub.Websockets.Core.Models;
-
-public class EventSubWebsocketSessionInfoPayload
+﻿namespace TwitchLib.EventSub.Websockets.Core.Models
 {
-    public EventSubWebsocketSessionInfo Session { get; set; }
+    public class EventSubWebsocketSessionInfoPayload
+    {
+        public EventSubWebsocketSessionInfo Session { get; set; }
+    }
 }

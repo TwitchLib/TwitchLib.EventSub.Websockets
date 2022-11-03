@@ -7,7 +7,6 @@ You can use it in production but Twitch may introduce breaking changes without p
 The same goes for this implementation until it reaches Version 1.0.0
 
 ## Prerequisites
-- A project targeting .NET 6 and up (we might provide a .NET Standard 2.0 version later on)
 - Currently we only support setup via Dependency Injection
 
 ## Resources
@@ -15,23 +14,23 @@ If you need help on how to setup Dependency Injection in your Console or WPF App
 - Console: https://dfederm.com/building-a-console-app-with-.net-generic-host/
 - WPF: https://laurentkempe.com/2019/09/03/WPF-and-dotnet-Generic-Host-with-dotnet-Core-3-0/
 
-You can also find a console app example in the repo.
+You can also find a console app example for .NET 6 and for .NET Framework 4.8 in the repo.
 
 ## Installation
 
 | NuGet            |       | [![TwitchLib.EventSub.Websockets][1]][2]                                       |
 | :--------------- | ----: | :--------------------------------------------------------------------------- |
-| Package Manager  | `PM>` | `Install-Package TwitchLib.EventSub.Websockets -Version 0.2.0`                 |
-| .NET CLI         | `>`   | `dotnet add package TwitchLib.EventSub.Websockets --version 0.2.0`             |
-| PackageReference |       | `<PackageReference Include="TwitchLib.EventSub.Websockets" Version="0.2.0" />` |
-| Paket CLI        | `>`   | `paket add TwitchLib.EventSub.Websockets --version 0.2.0`                      |
+| Package Manager  | `PM>` | `Install-Package TwitchLib.EventSub.Websockets -Version 0.3.0`                 |
+| .NET CLI         | `>`   | `dotnet add package TwitchLib.EventSub.Websockets --version 0.3.0`             |
+| PackageReference |       | `<PackageReference Include="TwitchLib.EventSub.Websockets" Version="0.3.0" />` |
+| Paket CLI        | `>`   | `paket add TwitchLib.EventSub.Websockets --version 0.3.0`                      |
 
 [1]: https://img.shields.io/nuget/v/TwitchLib.EventSub.Websockets.svg?label=TwitchLib.EventSub.Websockets
 [2]: https://www.nuget.org/packages/TwitchLib.EventSub.Websockets
 
 ## Setup
 
-Step 1: Create a new project (Console, WPF, ASP.NET) (.NET 6.0 and up)
+Step 1: Create a new project (Console, WPF, ASP.NET)
 
 Step 2: Install the TwitchLib.EventSub.Websockets nuget package. (See above on how to do that)
 
@@ -123,4 +122,6 @@ namespace TwitchLib.EventSub.Websockets.Test
 }
 ```
 
-Alternatively you can also just clone the example -> https://github.com/TwitchLib/TwitchLib.EventSub.Websockets/tree/master/TwitchLib.EventSub.Websockets.Example
+Alternatively you can also just clone the examples:
+- .NET Framework 4.8 https://github.com/TwitchLib/TwitchLib.EventSub.Websockets/tree/master/TwitchLib.EventSub.Websockets.Example.NetStandard
+- .NET 6 -> https://github.com/TwitchLib/TwitchLib.EventSub.Websockets/tree/master/TwitchLib.EventSub.Websockets.Example

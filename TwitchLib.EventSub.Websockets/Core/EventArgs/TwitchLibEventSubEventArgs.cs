@@ -2,6 +2,6 @@
 {
     public abstract class TwitchLibEventSubEventArgs<T> : System.EventArgs where T: new()
     {
-        public T Notification { get; set; } = new();
+        public T Notification { get; set; } = new T();
     }
 }
