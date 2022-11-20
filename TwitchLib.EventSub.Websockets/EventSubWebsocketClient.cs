@@ -45,10 +45,24 @@ namespace TwitchLib.EventSub.Websockets
         /// Event that triggers on "channel.ban" notifications
         /// </summary>
         public event EventHandler<ChannelBanArgs> ChannelBan;
+
+        /// <summary>
+        /// Event that triggers on "channel.charity_campaign.start" notifications
+        /// </summary>
+        public event EventHandler<ChannelCharityCampaignStartArgs> ChannelCharityCampaignStart;
         /// <summary>
         /// Event that triggers on "channel.charity_campaign.donate" notifications
         /// </summary>
         public event EventHandler<ChannelCharityCampaignDonateArgs> ChannelCharityCampaignDonate;
+        /// <summary>
+        /// Event that triggers on "channel.charity_campaign.progress" notifications
+        /// </summary>
+        public event EventHandler<ChannelCharityCampaignProgressArgs> ChannelCharityCampaignProgress;
+        /// <summary>
+        /// Event that triggers on "channel.charity_campaign.stop" notifications
+        /// </summary>
+        public event EventHandler<ChannelCharityCampaignStopArgs> ChannelCharityCampaignStop;
+
         /// <summary>
         /// Event that triggers on "channel.cheer" notifications
         /// </summary>
