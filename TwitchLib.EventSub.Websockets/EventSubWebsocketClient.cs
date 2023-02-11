@@ -163,6 +163,15 @@ namespace TwitchLib.EventSub.Websockets
         /// Event that triggers on "channel.raid" notifications
         /// </summary>
         public event EventHandler<ChannelRaidArgs> ChannelRaid;
+        
+        /// <summary>
+        /// Event that triggers on "channel.shield_mode.begin" notifications
+        /// </summary>
+        public event EventHandler<ChannelShieldModeBeginArgs> ChannelShieldModeBegin;
+        /// <summary>
+        /// Event that triggers on "channel.shield_mode.end" notifications
+        /// </summary>
+        public event EventHandler<ChannelShieldModeEndArgs> ChannelShieldModeEnd;
 
         /// <summary>
         /// Event that triggers on "channel.subscribe" notifications
