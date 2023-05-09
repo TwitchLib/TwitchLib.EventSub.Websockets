@@ -251,7 +251,7 @@ namespace TwitchLib.EventSub.Websockets
             DictionaryKeyPolicy = new SnakeCaseNamingPolicy()
         };
 
-        private const string WEBSOCKET_URL = "wss://eventsub-beta.wss.twitch.tv/ws";
+        private const string WEBSOCKET_URL = "wss://eventsub.wss.twitch.tv/ws";
 
         /// <summary>
         /// Instantiates an EventSubWebsocketClient used to subscribe to EventSub notifications via Websockets.
