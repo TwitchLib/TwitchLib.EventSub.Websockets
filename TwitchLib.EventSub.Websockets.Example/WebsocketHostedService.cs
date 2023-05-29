@@ -26,12 +26,12 @@ namespace TwitchLib.EventSub.Websockets.Example
             _eventSubWebsocketClient.ChannelFollow += OnChannelFollow;
         }
 
-        private void OnErrorOccurred(object sender, ErrorOccuredArgs e)
+        private async Task OnErrorOccurred(object sender, ErrorOccuredArgs e)
         {
             _logger.LogError($"Websocket {_eventSubWebsocketClient.SessionId} - Error occurred!");
         }
 
-        private void OnChannelFollow(object sender, ChannelFollowArgs e)
+        private async Task OnChannelFollow(object sender, ChannelFollowArgs e)
         {
             var eventData = e.Notification.Payload.Event;
             _logger.LogInformation($"{eventData.UserName} followed {eventData.BroadcasterUserName} at {eventData.FollowedAt}");
@@ -47,7 +47,7 @@ namespace TwitchLib.EventSub.Websockets.Example
             await _eventSubWebsocketClient.DisconnectAsync();
         }
 
-        private void OnWebsocketConnected(object sender, WebsocketConnectedArgs e)
+        private async Task OnWebsocketConnected(object sender, WebsocketConnectedArgs e)
         {
             _logger.LogInformation($"Websocket {_eventSubWebsocketClient.SessionId} connected!");
 
@@ -57,7 +57,7 @@ namespace TwitchLib.EventSub.Websockets.Example
             }
         }
 
-        private async void OnWebsocketDisconnected(object sender, EventArgs e)
+        private async Task OnWebsocketDisconnected(object sender, EventArgs e)
         {
             _logger.LogError($"Websocket {_eventSubWebsocketClient.SessionId} disconnected!");
 
@@ -69,7 +69,7 @@ namespace TwitchLib.EventSub.Websockets.Example
             }
         }
 
-        private void OnWebsocketReconnected(object sender, EventArgs e)
+        private async Task OnWebsocketReconnected(object sender, EventArgs e)
         {
             _logger.LogWarning($"Websocket {_eventSubWebsocketClient.SessionId} reconnected");
         }
