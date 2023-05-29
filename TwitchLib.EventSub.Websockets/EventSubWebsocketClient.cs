@@ -358,7 +358,7 @@ namespace TwitchLib.EventSub.Websockets
                             await oldRunningClient.DisconnectAsync();
                         oldRunningClient.Dispose();
 
-                        await WebsocketReconnected?.InvokeAsync(this, EventArgs.Empty);
+                        await WebsocketReconnected.InvokeAsync(this, EventArgs.Empty);
 
                         _reconnectRequested = false;
                         _reconnectComplete = false;
@@ -389,7 +389,7 @@ namespace TwitchLib.EventSub.Websockets
             if (!await ConnectAsync())
                 return false;
 
-            await WebsocketReconnected?.InvokeAsync(this, EventArgs.Empty);
+            await WebsocketReconnected.InvokeAsync(this, EventArgs.Empty);
 
             return true;
         }
@@ -432,7 +432,7 @@ namespace TwitchLib.EventSub.Websockets
 
             await DisconnectAsync();
 
-            await WebsocketDisconnected?.InvokeAsync(this, EventArgs.Empty);
+            await WebsocketDisconnected.InvokeAsync(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -464,7 +464,7 @@ namespace TwitchLib.EventSub.Websockets
                     var subscriptionType = json.RootElement.GetProperty("metadata").GetProperty("subscription_type").GetString();
                     if (string.IsNullOrWhiteSpace(subscriptionType))
                     {
-                        await ErrorOccurred?.InvokeAsync(this, new ErrorOccuredArgs { Exception = new ArgumentNullException(nameof(subscriptionType)), Message = "Unable to determine subscription type!" });
+                        await ErrorOccurred.InvokeAsync(this, new ErrorOccuredArgs { Exception = new ArgumentNullException(nameof(subscriptionType)), Message = "Unable to determine subscription type!" });
                         break;
                     }
                     HandleNotification(e.Message, subscriptionType);
@@ -486,7 +486,7 @@ namespace TwitchLib.EventSub.Websockets
         /// <param name="e">EventArgs send with the event. <see cref="ErrorOccuredArgs"/></param>
         private async Task OnErrorOccurred(object sender, ErrorOccuredArgs e)
         {
-            await ErrorOccurred?.InvokeAsync(this, e);
+            await ErrorOccurred.InvokeAsync(this, e);
         }
 
         /// <summary>
@@ -523,7 +523,7 @@ namespace TwitchLib.EventSub.Websockets
 
             _keepAliveTimeout = keepAliveTimeout.HasValue ? TimeSpan.FromSeconds(keepAliveTimeout.Value) : TimeSpan.FromSeconds(10);
 
-            await WebsocketConnected?.InvokeAsync(this, new WebsocketConnectedArgs { IsRequestedReconnect = _reconnectRequested });
+            await WebsocketConnected.InvokeAsync(this, new WebsocketConnectedArgs { IsRequestedReconnect = _reconnectRequested });
 
             _logger?.LogDebug(message);
         }
@@ -539,7 +539,7 @@ namespace TwitchLib.EventSub.Websockets
             if (data != null)
                 _logger?.LogCritical($"Websocket {data.Payload.Session.Id} disconnected at {data.Payload.Session.DisconnectedAt}. Reason: {data.Payload.Session.DisconnectReason}");
 
-            await WebsocketDisconnected?.InvokeAsync(this, EventArgs.Empty);
+            await WebsocketDisconnected.InvokeAsync(this, EventArgs.Empty);
         }
 
         /// <summary>
