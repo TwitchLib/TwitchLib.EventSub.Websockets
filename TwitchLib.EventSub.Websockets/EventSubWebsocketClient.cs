@@ -11,6 +11,8 @@ using TwitchLib.EventSub.Websockets.Core.EventArgs;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Stream;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.User;
+using TwitchLib.EventSub.Core;
+using TwitchLib.EventSub.Core.Extensions;
 using TwitchLib.EventSub.Websockets.Core.Handler;
 using TwitchLib.EventSub.Websockets.Core.Models;
 using TwitchLib.EventSub.Websockets.Core.NamingPolicies;
@@ -27,201 +29,201 @@ namespace TwitchLib.EventSub.Websockets
         /// <summary>
         /// Event that triggers when the websocket was successfully connected
         /// </summary>
-        public event EventHandler<WebsocketConnectedArgs> WebsocketConnected;
+        public event AsyncEventHandler<WebsocketConnectedArgs> WebsocketConnected;
         /// <summary>
         /// Event that triggers when the websocket disconnected
         /// </summary>
-        public event EventHandler WebsocketDisconnected;
+        public event AsyncEventHandler WebsocketDisconnected;
         /// <summary>
         /// Event that triggers when an error occurred on the websocket
         /// </summary>
-        public event EventHandler<ErrorOccuredArgs> ErrorOccurred;
+        public event AsyncEventHandler<ErrorOccuredArgs> ErrorOccurred;
         /// <summary>
         /// Event that triggers when the websocket was successfully reconnected
         /// </summary>
-        public event EventHandler WebsocketReconnected;
+        public event AsyncEventHandler WebsocketReconnected;
 
         /// <summary>
         /// Event that triggers on "channel.ban" notifications
         /// </summary>
-        public event EventHandler<ChannelBanArgs> ChannelBan;
+        public event AsyncEventHandler<ChannelBanArgs> ChannelBan;
 
         /// <summary>
         /// Event that triggers on "channel.charity_campaign.start" notifications
         /// </summary>
-        public event EventHandler<ChannelCharityCampaignStartArgs> ChannelCharityCampaignStart;
+        public event AsyncEventHandler<ChannelCharityCampaignStartArgs> ChannelCharityCampaignStart;
         /// <summary>
         /// Event that triggers on "channel.charity_campaign.donate" notifications
         /// </summary>
-        public event EventHandler<ChannelCharityCampaignDonateArgs> ChannelCharityCampaignDonate;
+        public event AsyncEventHandler<ChannelCharityCampaignDonateArgs> ChannelCharityCampaignDonate;
         /// <summary>
         /// Event that triggers on "channel.charity_campaign.progress" notifications
         /// </summary>
-        public event EventHandler<ChannelCharityCampaignProgressArgs> ChannelCharityCampaignProgress;
+        public event AsyncEventHandler<ChannelCharityCampaignProgressArgs> ChannelCharityCampaignProgress;
         /// <summary>
         /// Event that triggers on "channel.charity_campaign.stop" notifications
         /// </summary>
-        public event EventHandler<ChannelCharityCampaignStopArgs> ChannelCharityCampaignStop;
+        public event AsyncEventHandler<ChannelCharityCampaignStopArgs> ChannelCharityCampaignStop;
 
         /// <summary>
         /// Event that triggers on "channel.cheer" notifications
         /// </summary>
-        public event EventHandler<ChannelCheerArgs> ChannelCheer;
+        public event AsyncEventHandler<ChannelCheerArgs> ChannelCheer;
         /// <summary>
         /// Event that triggers on "channel.follow" notifications
         /// </summary>
-        public event EventHandler<ChannelFollowArgs> ChannelFollow;
+        public event AsyncEventHandler<ChannelFollowArgs> ChannelFollow;
 
         /// <summary>
         /// Event that triggers on "channel.goal.begin" notifications
         /// </summary>
-        public event EventHandler<ChannelGoalBeginArgs> ChannelGoalBegin;
+        public event AsyncEventHandler<ChannelGoalBeginArgs> ChannelGoalBegin;
         /// <summary>
         /// Event that triggers on "channel.goal.end" notifications
         /// </summary>
-        public event EventHandler<ChannelGoalEndArgs> ChannelGoalEnd;
+        public event AsyncEventHandler<ChannelGoalEndArgs> ChannelGoalEnd;
         /// <summary>
         /// Event that triggers on "channel.goal.progress" notifications
         /// </summary>
-        public event EventHandler<ChannelGoalProgressArgs> ChannelGoalProgress;
+        public event AsyncEventHandler<ChannelGoalProgressArgs> ChannelGoalProgress;
 
         /// <summary>
         /// Event that triggers on "channel.hype_train.begin" notifications
         /// </summary>
-        public event EventHandler<ChannelHypeTrainBeginArgs> ChannelHypeTrainBegin;
+        public event AsyncEventHandler<ChannelHypeTrainBeginArgs> ChannelHypeTrainBegin;
         /// <summary>
         /// Event that triggers on "channel.hype_train.end" notifications
         /// </summary>
-        public event EventHandler<ChannelHypeTrainEndArgs> ChannelHypeTrainEnd;
+        public event AsyncEventHandler<ChannelHypeTrainEndArgs> ChannelHypeTrainEnd;
         /// <summary>
         /// Event that triggers on "channel.hype_train.progress" notifications
         /// </summary>
-        public event EventHandler<ChannelHypeTrainProgressArgs> ChannelHypeTrainProgress;
+        public event AsyncEventHandler<ChannelHypeTrainProgressArgs> ChannelHypeTrainProgress;
 
         /// <summary>
         /// Event that triggers on "channel.moderator.add" notifications
         /// </summary>
-        public event EventHandler<ChannelModeratorArgs> ChannelModeratorAdd;
+        public event AsyncEventHandler<ChannelModeratorArgs> ChannelModeratorAdd;
         /// <summary>
         /// Event that triggers on "channel.moderator.remove" notifications
         /// </summary>
-        public event EventHandler<ChannelModeratorArgs> ChannelModeratorRemove;
+        public event AsyncEventHandler<ChannelModeratorArgs> ChannelModeratorRemove;
 
         /// <summary>
         /// Event that triggers on "channel.channel_points_custom_reward.add" notifications
         /// </summary>
-        public event EventHandler<ChannelPointsCustomRewardArgs> ChannelPointsCustomRewardAdd;
+        public event AsyncEventHandler<ChannelPointsCustomRewardArgs> ChannelPointsCustomRewardAdd;
         /// <summary>
         /// Event that triggers on "channel.channel_points_custom_reward.remove" notifications
         /// </summary>
-        public event EventHandler<ChannelPointsCustomRewardArgs> ChannelPointsCustomRewardRemove;
+        public event AsyncEventHandler<ChannelPointsCustomRewardArgs> ChannelPointsCustomRewardRemove;
         /// <summary>
         /// Event that triggers on "channel.channel_points_custom_reward.update" notifications
         /// </summary>
-        public event EventHandler<ChannelPointsCustomRewardArgs> ChannelPointsCustomRewardUpdate;
+        public event AsyncEventHandler<ChannelPointsCustomRewardArgs> ChannelPointsCustomRewardUpdate;
 
         /// <summary>
         /// Event that triggers on "channel.channel_points_custom_reward_redemption.add" notifications
         /// </summary>
-        public event EventHandler<ChannelPointsCustomRewardRedemptionArgs> ChannelPointsCustomRewardRedemptionAdd;
+        public event AsyncEventHandler<ChannelPointsCustomRewardRedemptionArgs> ChannelPointsCustomRewardRedemptionAdd;
         /// <summary>
         /// Event that triggers on "channel.channel_points_custom_reward_redemption.update" notifications
         /// </summary>
-        public event EventHandler<ChannelPointsCustomRewardRedemptionArgs> ChannelPointsCustomRewardRedemptionUpdate;
+        public event AsyncEventHandler<ChannelPointsCustomRewardRedemptionArgs> ChannelPointsCustomRewardRedemptionUpdate;
 
         /// <summary>
         /// Event that triggers on "channel.poll.begin" notifications
         /// </summary>
-        public event EventHandler<ChannelPollBeginArgs> ChannelPollBegin;
+        public event AsyncEventHandler<ChannelPollBeginArgs> ChannelPollBegin;
         /// <summary>
         /// Event that triggers on "channel.poll.end" notifications
         /// </summary>
-        public event EventHandler<ChannelPollEndArgs> ChannelPollEnd;
+        public event AsyncEventHandler<ChannelPollEndArgs> ChannelPollEnd;
         /// <summary>
         /// Event that triggers on "channel.poll.progress" notifications
         /// </summary>
-        public event EventHandler<ChannelPollProgressArgs> ChannelPollProgress;
+        public event AsyncEventHandler<ChannelPollProgressArgs> ChannelPollProgress;
 
         /// <summary>
         /// Event that triggers on "channel.prediction.begin" notifications
         /// </summary>
-        public event EventHandler<ChannelPredictionBeginArgs> ChannelPredictionBegin;
+        public event AsyncEventHandler<ChannelPredictionBeginArgs> ChannelPredictionBegin;
         /// <summary>
         /// Event that triggers on "channel.prediction.end" notifications
         /// </summary>
-        public event EventHandler<ChannelPredictionEndArgs> ChannelPredictionEnd;
+        public event AsyncEventHandler<ChannelPredictionEndArgs> ChannelPredictionEnd;
         /// <summary>
         /// Event that triggers on "channel.prediction.lock" notifications
         /// </summary>
-        public event EventHandler<ChannelPredictionLockArgs> ChannelPredictionLock;
+        public event AsyncEventHandler<ChannelPredictionLockArgs> ChannelPredictionLock;
         /// <summary>
         /// Event that triggers on "channel.prediction.progress" notifications
         /// </summary>
-        public event EventHandler<ChannelPredictionProgressArgs> ChannelPredictionProgress;
+        public event AsyncEventHandler<ChannelPredictionProgressArgs> ChannelPredictionProgress;
 
         /// <summary>
         /// Event that triggers on "channel.raid" notifications
         /// </summary>
-        public event EventHandler<ChannelRaidArgs> ChannelRaid;
+        public event AsyncEventHandler<ChannelRaidArgs> ChannelRaid;
         
         /// <summary>
         /// Event that triggers on "channel.shield_mode.begin" notifications
         /// </summary>
-        public event EventHandler<ChannelShieldModeBeginArgs> ChannelShieldModeBegin;
+        public event AsyncEventHandler<ChannelShieldModeBeginArgs> ChannelShieldModeBegin;
         /// <summary>
         /// Event that triggers on "channel.shield_mode.end" notifications
         /// </summary>
-        public event EventHandler<ChannelShieldModeEndArgs> ChannelShieldModeEnd;
+        public event AsyncEventHandler<ChannelShieldModeEndArgs> ChannelShieldModeEnd;
         
         /// <summary>
         /// Event that triggers on "channel.shoutout.create" notifications
         /// </summary>
-        public event EventHandler<ChannelShoutoutCreateArgs> ChannelShoutoutCreate;
+        public event AsyncEventHandler<ChannelShoutoutCreateArgs> ChannelShoutoutCreate;
         /// <summary>
         /// Event that triggers on "channel.shoutout.receive" notifications
         /// </summary>
-        public event EventHandler<ChannelShoutoutReceiveArgs> ChannelShoutoutReceive;
+        public event AsyncEventHandler<ChannelShoutoutReceiveArgs> ChannelShoutoutReceive;
 
         /// <summary>
         /// Event that triggers on "channel.subscribe" notifications
         /// </summary>
-        public event EventHandler<ChannelSubscribeArgs> ChannelSubscribe;
+        public event AsyncEventHandler<ChannelSubscribeArgs> ChannelSubscribe;
         /// <summary>
         /// Event that triggers on "channel.subscription.end" notifications
         /// </summary>
-        public event EventHandler<ChannelSubscriptionEndArgs> ChannelSubscriptionEnd;
+        public event AsyncEventHandler<ChannelSubscriptionEndArgs> ChannelSubscriptionEnd;
         /// <summary>
         /// Event that triggers on "channel.subscription.gift" notifications
         /// </summary>
-        public event EventHandler<ChannelSubscriptionGiftArgs> ChannelSubscriptionGift;
+        public event AsyncEventHandler<ChannelSubscriptionGiftArgs> ChannelSubscriptionGift;
         /// <summary>
         /// Event that triggers on "channel.subscription.message" notifications
         /// </summary>
-        public event EventHandler<ChannelSubscriptionMessageArgs> ChannelSubscriptionMessage;
+        public event AsyncEventHandler<ChannelSubscriptionMessageArgs> ChannelSubscriptionMessage;
 
         /// <summary>
         /// Event that triggers on "channel.unban" notifications
         /// </summary>
-        public event EventHandler<ChannelUnbanArgs> ChannelUnban;
+        public event AsyncEventHandler<ChannelUnbanArgs> ChannelUnban;
 
         /// <summary>
         /// Event that triggers on "channel.update" notifications
         /// </summary>
-        public event EventHandler<ChannelUpdateArgs> ChannelUpdate;
+        public event AsyncEventHandler<ChannelUpdateArgs> ChannelUpdate;
 
         /// <summary>
         /// Event that triggers on "stream.offline" notifications
         /// </summary>
-        public event EventHandler<StreamOfflineArgs> StreamOffline;
+        public event AsyncEventHandler<StreamOfflineArgs> StreamOffline;
         /// <summary>
         /// Event that triggers on "stream.online" notifications
         /// </summary>
-        public event EventHandler<StreamOnlineArgs> StreamOnline;
+        public event AsyncEventHandler<StreamOnlineArgs> StreamOnline;
 
         /// <summary>
         /// Event that triggers on "user.update" notifications
         /// </summary>
-        public event EventHandler<UserUpdateArgs> UserUpdate;
+        public event AsyncEventHandler<UserUpdateArgs> UserUpdate;
 
         #endregion
 
@@ -356,7 +358,7 @@ namespace TwitchLib.EventSub.Websockets
                             await oldRunningClient.DisconnectAsync();
                         oldRunningClient.Dispose();
 
-                        WebsocketReconnected?.Invoke(this, EventArgs.Empty);
+                        await WebsocketReconnected.InvokeAsync(this, EventArgs.Empty);
 
                         _reconnectRequested = false;
                         _reconnectComplete = false;
@@ -387,7 +389,7 @@ namespace TwitchLib.EventSub.Websockets
             if (!await ConnectAsync())
                 return false;
 
-            WebsocketReconnected?.Invoke(this, EventArgs.Empty);
+            await WebsocketReconnected.InvokeAsync(this, EventArgs.Empty);
 
             return true;
         }
@@ -430,15 +432,15 @@ namespace TwitchLib.EventSub.Websockets
 
             await DisconnectAsync();
 
-            WebsocketDisconnected?.Invoke(this, EventArgs.Empty);
+            await WebsocketDisconnected.InvokeAsync(this, EventArgs.Empty);
         }
 
         /// <summary>
-        /// EventHandler for the DataReceived event from the underlying websocket. This is where every notification that gets in gets handled"/>
+        /// AsyncEventHandler for the DataReceived event from the underlying websocket. This is where every notification that gets in gets handled"/>
         /// </summary>
         /// <param name="sender">Sender of the event. In this case <see cref="WebsocketClient"/></param>
         /// <param name="e">EventArgs send with the event. <see cref="DataReceivedArgs"/></param>
-        private void OnDataReceived(object sender, DataReceivedArgs e)
+        private async Task OnDataReceived(object sender, DataReceivedArgs e)
         {
             _lastReceived = DateTimeOffset.Now;
 
@@ -447,10 +449,10 @@ namespace TwitchLib.EventSub.Websockets
             switch (messageType)
             {
                 case "session_welcome":
-                    HandleWelcome(e.Message);
+                    await HandleWelcome(e.Message);
                     break;
                 case "session_disconnect":
-                    HandleDisconnect(e.Message);
+                    await HandleDisconnect(e.Message);
                     break;
                 case "session_reconnect":
                     HandleReconnect(e.Message);
@@ -462,7 +464,7 @@ namespace TwitchLib.EventSub.Websockets
                     var subscriptionType = json.RootElement.GetProperty("metadata").GetProperty("subscription_type").GetString();
                     if (string.IsNullOrWhiteSpace(subscriptionType))
                     {
-                        ErrorOccurred?.Invoke(this, new ErrorOccuredArgs { Exception = new ArgumentNullException(nameof(subscriptionType)), Message = "Unable to determine subscription type!" });
+                        await ErrorOccurred.InvokeAsync(this, new ErrorOccuredArgs { Exception = new ArgumentNullException(nameof(subscriptionType)), Message = "Unable to determine subscription type!" });
                         break;
                     }
                     HandleNotification(e.Message, subscriptionType);
@@ -478,13 +480,13 @@ namespace TwitchLib.EventSub.Websockets
         }
 
         /// <summary>
-        /// EventHandler for the ErrorOccurred event from the underlying websocket. This handler only serves as a relay up to the user code"/>
+        /// AsyncEventHandler for the ErrorOccurred event from the underlying websocket. This handler only serves as a relay up to the user code"/>
         /// </summary>
         /// <param name="sender">Sender of the event. In this case <see cref="WebsocketClient"/></param>
         /// <param name="e">EventArgs send with the event. <see cref="ErrorOccuredArgs"/></param>
-        private void OnErrorOccurred(object sender, ErrorOccuredArgs e)
+        private async Task OnErrorOccurred(object sender, ErrorOccuredArgs e)
         {
-            ErrorOccurred?.Invoke(this, e);
+            await ErrorOccurred.InvokeAsync(this, e);
         }
 
         /// <summary>
@@ -506,7 +508,7 @@ namespace TwitchLib.EventSub.Websockets
         /// Handles 'session_welcome' notifications
         /// </summary>
         /// <param name="message">notification message received from Twitch EventSub</param>
-        private void HandleWelcome(string message)
+        private async ValueTask HandleWelcome(string message)
         {
             var data = JsonSerializer.Deserialize<EventSubWebsocketSessionInfoMessage>(message, _jsonSerializerOptions);
 
@@ -521,7 +523,7 @@ namespace TwitchLib.EventSub.Websockets
 
             _keepAliveTimeout = keepAliveTimeout.HasValue ? TimeSpan.FromSeconds(keepAliveTimeout.Value) : TimeSpan.FromSeconds(10);
 
-            WebsocketConnected?.Invoke(this, new WebsocketConnectedArgs { IsRequestedReconnect = _reconnectRequested });
+            await WebsocketConnected.InvokeAsync(this, new WebsocketConnectedArgs { IsRequestedReconnect = _reconnectRequested });
 
             _logger?.LogDebug(message);
         }
@@ -530,14 +532,14 @@ namespace TwitchLib.EventSub.Websockets
         /// Handles 'session_disconnect' notifications
         /// </summary>
         /// <param name="message">notification message received from Twitch EventSub</param>
-        private void HandleDisconnect(string message)
+        private async Task HandleDisconnect(string message)
         {
             var data = JsonSerializer.Deserialize<EventSubWebsocketSessionInfoMessage>(message);
 
             if (data != null)
                 _logger?.LogCritical($"Websocket {data.Payload.Session.Id} disconnected at {data.Payload.Session.DisconnectedAt}. Reason: {data.Payload.Session.DisconnectReason}");
 
-            WebsocketDisconnected?.Invoke(this, EventArgs.Empty);
+            await WebsocketDisconnected.InvokeAsync(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -583,8 +585,7 @@ namespace TwitchLib.EventSub.Websockets
         {
             var fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic);
 
-            var multi = fInfo?.GetValue(this) as MulticastDelegate;
-            if (multi is null)
+            if (!(fInfo?.GetValue(this) is MulticastDelegate multi))
                 return;
 
             foreach (var del in multi.GetInvocationList())
