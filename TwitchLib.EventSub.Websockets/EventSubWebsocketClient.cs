@@ -2,10 +2,12 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging.Abstractions;
 using TwitchLib.EventSub.Websockets.Client;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
@@ -266,6 +268,7 @@ namespace TwitchLib.EventSub.Websockets
         private Dictionary<string, Action<EventSubWebsocketClient, string, JsonSerializerOptions>> _handlers;
 
         private readonly ILogger<EventSubWebsocketClient> _logger;
+        private readonly ILoggerFactory _loggerFactory;
         private readonly IServiceProvider _serviceProvider;
 
         private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
@@ -300,6 +303,37 @@ namespace TwitchLib.EventSub.Websockets
             _reconnectRequested = false;
         }
 
+        /// <summary>
+        /// Instantiates an EventSubWebsocketClient used to subscribe to EventSub notifications via Websockets.
+        /// </summary>
+        /// <param name="loggerFactory">LoggerFactory used to construct Loggers for the EventSubWebsocketClient and underlying classes</param>
+        public EventSubWebsocketClient(ILoggerFactory loggerFactory = null)
+        {
+            _loggerFactory = loggerFactory;
+            
+            _logger = _loggerFactory != null 
+                ? _loggerFactory.CreateLogger<EventSubWebsocketClient>() 
+                : NullLogger<EventSubWebsocketClient>.Instance;
+
+            _websocketClient = _loggerFactory != null 
+                ? new WebsocketClient(_loggerFactory.CreateLogger<WebsocketClient>())
+                : new WebsocketClient();
+            
+            _websocketClient.OnDataReceived += OnDataReceived;
+            _websocketClient.OnErrorOccurred += OnErrorOccurred;
+            
+            var handlers = typeof(INotificationHandler)
+                .Assembly.ExportedTypes
+                .Where(x => typeof(INotificationHandler).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
+                .Select(Activator.CreateInstance).Cast<INotificationHandler>()
+                .ToList();
+
+            PrepareHandlers(handlers);
+            
+            _reconnectComplete = false;
+            _reconnectRequested = false;
+        }
+        
         /// <summary>
         /// Connect to Twitch EventSub Websockets
         /// </summary>
@@ -357,7 +391,7 @@ namespace TwitchLib.EventSub.Websockets
 
                 var reconnectClient = _serviceProvider != null
                     ? _serviceProvider.GetRequiredService<WebsocketClient>()
-                    : new WebsocketClient(null);
+                    : new WebsocketClient(_loggerFactory?.CreateLogger<WebsocketClient>());
 
                 reconnectClient.OnDataReceived += OnDataReceived;
                 reconnectClient.OnErrorOccurred += OnErrorOccurred;
@@ -403,7 +437,7 @@ namespace TwitchLib.EventSub.Websockets
 
             _websocketClient = _serviceProvider != null
                 ? _serviceProvider.GetRequiredService<WebsocketClient>()
-                : new WebsocketClient(null);
+                : new WebsocketClient(_loggerFactory?.CreateLogger<WebsocketClient>());
 
             _websocketClient.OnDataReceived += OnDataReceived;
             _websocketClient.OnErrorOccurred += OnErrorOccurred;
