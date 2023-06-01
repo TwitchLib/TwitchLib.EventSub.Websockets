@@ -13,6 +13,7 @@ using TwitchLib.EventSub.Websockets.Core.EventArgs.Stream;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.User;
 using TwitchLib.EventSub.Core;
 using TwitchLib.EventSub.Core.Extensions;
+using TwitchLib.EventSub.Core.SubscriptionTypes.Channel;
 using TwitchLib.EventSub.Websockets.Core.Handler;
 using TwitchLib.EventSub.Websockets.Core.Models;
 using TwitchLib.EventSub.Websockets.Core.NamingPolicies;
@@ -86,6 +87,27 @@ namespace TwitchLib.EventSub.Websockets
         /// Event that triggers on "channel.goal.progress" notifications
         /// </summary>
         public event AsyncEventHandler<ChannelGoalProgressArgs> ChannelGoalProgress;
+        
+        /// <summary>
+        /// Event that triggers on "channel.guest_star_guest.update" notifications
+        /// </summary>
+        public event AsyncEventHandler<ChannelGuestStarGuestUpdateArgs> ChannelGuestStarGuestUpdate;
+        /// <summary>
+        /// Event that triggers on "channel.guest_star_session.begin" notifications
+        /// </summary>
+        public event AsyncEventHandler<ChannelGuestStarSessionBegin> ChannelGuestStarSessionBegin;
+        /// <summary>
+        /// Event that triggers on "channel.guest_star_guest.update" notifications
+        /// </summary>
+        public event AsyncEventHandler<ChannelGuestStarSessionEnd> ChannelGuestStarSessionEnd;
+        /// <summary>
+        /// Event that triggers on "channel.guest_star_settings.update" notifications
+        /// </summary>
+        public event AsyncEventHandler<ChannelGuestStarSettingsUpdateArgs> ChannelGuestStarSettingsUpdate;
+        /// <summary>
+        /// Event that triggers on "channel.guest_star_slot.update" notifications
+        /// </summary>
+        public event AsyncEventHandler<ChannelGuestStarSlotUpdateArgs> ChannelGuestStarSlotUpdate;
 
         /// <summary>
         /// Event that triggers on "channel.hype_train.begin" notifications
