@@ -18,7 +18,6 @@ using TwitchLib.EventSub.Core.Extensions;
 using TwitchLib.EventSub.Core.SubscriptionTypes.Channel;
 using TwitchLib.EventSub.Websockets.Core.Handler;
 using TwitchLib.EventSub.Websockets.Core.Models;
-using TwitchLib.EventSub.Websockets.Core.NamingPolicies;
 
 namespace TwitchLib.EventSub.Websockets
 {
@@ -274,8 +273,8 @@ namespace TwitchLib.EventSub.Websockets
         private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
-            PropertyNamingPolicy = new SnakeCaseNamingPolicy(),
-            DictionaryKeyPolicy = new SnakeCaseNamingPolicy()
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+            DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower
         };
 
         private const string WEBSOCKET_URL = "wss://eventsub.wss.twitch.tv/ws";

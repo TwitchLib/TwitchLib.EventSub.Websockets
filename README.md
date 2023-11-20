@@ -6,9 +6,6 @@ EventSub via Websockets is still in open beta.
 You can use it in production but Twitch may introduce breaking changes without prior notice.
 The same goes for this implementation until it reaches Version 1.0.0
 
-## Prerequisites
-- Currently we only support setup via Dependency Injection
-
 ## Resources
 If you need help on how to setup Dependency Injection in your Console or WPF Application you can have a look at these guides:
 - Console: https://dfederm.com/building-a-console-app-with-.net-generic-host/
