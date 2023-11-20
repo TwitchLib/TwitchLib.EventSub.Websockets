@@ -11,7 +11,7 @@ If you need help on how to setup Dependency Injection in your Console or WPF App
 - Console: https://dfederm.com/building-a-console-app-with-.net-generic-host/
 - WPF: https://laurentkempe.com/2019/09/03/WPF-and-dotnet-Generic-Host-with-dotnet-Core-3-0/
 
-You can also find a console app example for .NET 6 and for .NET Framework 4.8 in the repo.
+You can also find a console app example for .NET 8 and for .NET Framework 4.8 in the repo.
 
 ## Installation
 
@@ -121,4 +121,4 @@ namespace TwitchLib.EventSub.Websockets.Test
 
 Alternatively you can also just clone the examples:
 - .NET Framework 4.8 https://github.com/TwitchLib/TwitchLib.EventSub.Websockets/tree/main/TwitchLib.EventSub.Websockets.Example.NetStandard
-- .NET 6 -> https://github.com/TwitchLib/TwitchLib.EventSub.Websockets/tree/main/TwitchLib.EventSub.Websockets.Example
+- .NET 8 -> https://github.com/TwitchLib/TwitchLib.EventSub.Websockets/tree/main/TwitchLib.EventSub.Websockets.Example
