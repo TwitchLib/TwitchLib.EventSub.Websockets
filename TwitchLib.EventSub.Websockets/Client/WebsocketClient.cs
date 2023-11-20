@@ -54,7 +54,7 @@ namespace TwitchLib.EventSub.Websockets.Client
         {
             try
             {
-                if (_webSocket.State == WebSocketState.Open || _webSocket.State == WebSocketState.Connecting)
+                if (_webSocket.State is WebSocketState.Open or WebSocketState.Connecting)
                     return true;
 
                 await _webSocket.ConnectAsync(url, CancellationToken.None);
@@ -80,7 +80,7 @@ namespace TwitchLib.EventSub.Websockets.Client
         {
             try
             {
-                if (_webSocket.State == WebSocketState.Open || _webSocket.State == WebSocketState.Connecting)
+                if (_webSocket.State is WebSocketState.Open or WebSocketState.Connecting)
                     await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
 
                 return true;
