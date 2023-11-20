@@ -18,6 +18,7 @@ using TwitchLib.EventSub.Core.Extensions;
 using TwitchLib.EventSub.Core.SubscriptionTypes.Channel;
 using TwitchLib.EventSub.Websockets.Core.Handler;
 using TwitchLib.EventSub.Websockets.Core.Models;
+using TwitchLib.EventSub.Websockets.Extensions;
 
 namespace TwitchLib.EventSub.Websockets
 {
@@ -424,7 +425,7 @@ namespace TwitchLib.EventSub.Websockets
                     await Task.Delay(100);
                 }
 
-                _logger?.LogError($"Websocket reconnect for {SessionId} failed!");
+                _logger?.LogReconnectFailed(SessionId);
 
                 return false;
             }
@@ -528,8 +529,8 @@ namespace TwitchLib.EventSub.Websockets
                     HandleRevocation(e.Message);
                     break;
                 default:
-                    _logger?.LogWarning($"Unknown message type: {messageType}");
-                    _logger?.LogDebug(e.Message);
+                    _logger?.LogUnknownMessageType(messageType);
+                    _logger?.LogMessage(e.Message);
                     break;
             }
         }
@@ -550,13 +551,13 @@ namespace TwitchLib.EventSub.Websockets
         /// <param name="message">notification message received from Twitch EventSub</param>
         private void HandleReconnect(string message)
         {
-            _logger?.LogWarning($"Reconnect for {SessionId} requested!");
+            _logger?.LogReconnectRequested(SessionId);
             var data = JsonSerializer.Deserialize<EventSubWebsocketSessionInfoMessage>(message, _jsonSerializerOptions);
             _reconnectRequested = true;
 
             Task.Run(async () => await ReconnectAsync(new Uri(data?.Payload.Session.ReconnectUrl ?? WEBSOCKET_URL)));
 
-            _logger?.LogDebug(message);
+            _logger?.LogMessage(message);
         }
 
         /// <summary>
@@ -580,7 +581,7 @@ namespace TwitchLib.EventSub.Websockets
 
             await WebsocketConnected.InvokeAsync(this, new WebsocketConnectedArgs { IsRequestedReconnect = _reconnectRequested });
 
-            _logger?.LogDebug(message);
+            _logger?.LogMessage(message);
         }
 
         /// <summary>
@@ -592,8 +593,8 @@ namespace TwitchLib.EventSub.Websockets
             var data = JsonSerializer.Deserialize<EventSubWebsocketSessionInfoMessage>(message);
 
             if (data != null)
-                _logger?.LogCritical($"Websocket {data.Payload.Session.Id} disconnected at {data.Payload.Session.DisconnectedAt}. Reason: {data.Payload.Session.DisconnectReason}");
-
+                _logger?.LogForceDisconnected(data.Payload.Session.Id, data.Payload.Session.DisconnectedAt, data.Payload.Session.DisconnectReason);
+            
             await WebsocketDisconnected.InvokeAsync(this, EventArgs.Empty);
         }
 
@@ -603,7 +604,7 @@ namespace TwitchLib.EventSub.Websockets
         /// <param name="message">notification message received from Twitch EventSub</param>
         private void HandleKeepAlive(string message)
         {
-            _logger?.LogDebug(message);
+            _logger?.LogMessage(message);
         }
 
         /// <summary>
@@ -616,7 +617,7 @@ namespace TwitchLib.EventSub.Websockets
             if (_handlers != null && _handlers.TryGetValue(subscriptionType, out var handler))
                 handler(this, message, _jsonSerializerOptions);
 
-            _logger?.LogDebug(message);
+            _logger?.LogMessage(message);
         }
 
         /// <summary>
@@ -628,7 +629,7 @@ namespace TwitchLib.EventSub.Websockets
             if (_handlers != null && _handlers.TryGetValue("revocation", out var handler))
                 handler(this, message, _jsonSerializerOptions);
 
-            _logger?.LogDebug(message);
+            _logger?.LogMessage(message);
         }
 
         /// <summary>
@@ -640,7 +641,7 @@ namespace TwitchLib.EventSub.Websockets
         {
             var fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic);
 
-            if (!(fInfo?.GetValue(this) is MulticastDelegate multi))
+            if (fInfo?.GetValue(this) is not MulticastDelegate multi)
                 return;
 
             foreach (var del in multi.GetInvocationList())

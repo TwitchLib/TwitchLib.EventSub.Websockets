@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TwitchLib.EventSub.Core;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
+using TwitchLib.EventSub.Websockets.Extensions;
 
 #if NET6_0_OR_GREATER
 using System.Buffers;
@@ -140,7 +141,7 @@ namespace TwitchLib.EventSub.Websockets.Client
                         case WebSocketMessageType.Binary:
                             break;
                         case WebSocketMessageType.Close:
-                            _logger?.LogCritical($"{(WebSocketCloseStatus)_webSocket.CloseStatus!} - {_webSocket.CloseStatusDescription!}");
+                            _logger?.LogWebsocketClosed((WebSocketCloseStatus)_webSocket.CloseStatus!, _webSocket.CloseStatusDescription!);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -180,7 +181,7 @@ namespace TwitchLib.EventSub.Websockets.Client
                         if (buffer.Array == null)
                             continue;
 
-                        memory.Write(buffer.Array, buffer.Offset, receiveResult.Count);
+                        await memory.WriteAsync(buffer.Array, buffer.Offset, receiveResult.Count);
                         payloadSize += receiveResult.Count;
                     } while (!receiveResult.EndOfMessage);
 
@@ -205,7 +206,7 @@ namespace TwitchLib.EventSub.Websockets.Client
                             break;
                         case WebSocketMessageType.Close:
                             if (_webSocket.CloseStatus != null)
-                                _logger?.LogCritical($"{(WebSocketCloseStatus) _webSocket.CloseStatus} - {_webSocket.CloseStatusDescription}");
+                                _logger?.LogWebsocketClosed((WebSocketCloseStatus)_webSocket.CloseStatus!, _webSocket.CloseStatusDescription!);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();

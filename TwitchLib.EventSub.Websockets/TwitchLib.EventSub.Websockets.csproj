@@ -25,6 +25,7 @@
 	<AnalysisLevel>latest-all</AnalysisLevel>
 	<EnableNETAnalyzers>True</EnableNETAnalyzers>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
