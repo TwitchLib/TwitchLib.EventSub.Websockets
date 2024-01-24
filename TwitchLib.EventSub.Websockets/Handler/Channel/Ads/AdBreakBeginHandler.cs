@@ -24,7 +24,7 @@ namespace TwitchLib.EventSub.Websockets.Handler.Channel.Ads
                 var data = JsonSerializer.Deserialize<EventSubNotification<ChannelAdBreakBegin>>(jsonString.AsSpan(), serializerOptions);
                 if (data is null)
                     throw new InvalidOperationException("Parsed JSON cannot be null!");
-                client.RaiseEvent("ChannelAdBreakBegin", new ChannelPointsCustomRewardArgs { Notification = data });
+                client.RaiseEvent("ChannelAdBreakBegin", new ChannelAdBreakBeginArgs { Notification = data });
             }
             catch (Exception ex)
             {
