@@ -2,8 +2,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using TwitchLib.Api;
+using TwitchLib.Api.Core.Enums;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 
@@ -14,6 +17,8 @@ namespace TwitchLib.EventSub.Websockets.Example.NetStandard
         private readonly IConfiguration _configuration;
         private readonly ILogger<WebsocketHostedService> _logger;
         private readonly EventSubWebsocketClient _eventSubWebsocketClient;
+        private TwitchAPI _twitchApi;
+        private string _userId;
 
         public WebsocketHostedService(IConfiguration configuration ,ILogger<WebsocketHostedService> logger, EventSubWebsocketClient eventSubWebsocketClient)
         {
@@ -27,6 +32,9 @@ namespace TwitchLib.EventSub.Websockets.Example.NetStandard
             _eventSubWebsocketClient.ErrorOccurred += OnErrorOccurred;
 
             _eventSubWebsocketClient.ChannelFollow += OnChannelFollow;
+            _twitchApi.Settings.ClientId = "YOUR_APP_CLIENT_ID";
+            _twitchApi.Settings.AccessToken = "YOUR_APPLICATION_ACCESS_TOKEN";
+            _userId = "USER_ID";
         }
 
         private async Task OnErrorOccurred(object sender, ErrorOccuredArgs e)
@@ -57,6 +65,9 @@ namespace TwitchLib.EventSub.Websockets.Example.NetStandard
             if (!e.IsRequestedReconnect)
             {
                 // subscribe to topics
+                var condition = new Dictionary<string, string> { { "broadcaster_user_id", _userId }, {"moderator_user_id", _userId} };
+                await _twitchApi.Helix.EventSub.CreateEventSubSubscriptionAsync("channel.follow", "2", condition, EventSubTransportMethod.Websocket,
+                    _eventSubWebsocketClient.SessionId, accessToken: "BROADCASTER_ACCESS_TOKEN_WITH_SCOPES");
             }
         }
 
