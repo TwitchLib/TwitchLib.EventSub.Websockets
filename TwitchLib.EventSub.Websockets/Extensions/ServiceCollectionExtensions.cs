@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using TwitchLib.EventSub.Websockets.Client;
 using TwitchLib.EventSub.Websockets.Core.Handler;
 
@@ -42,7 +44,7 @@ namespace TwitchLib.EventSub.Websockets.Extensions
         public static IServiceCollection AddTwitchLibEventSubWebsockets(this IServiceCollection services)
         {
             services.TryAddTransient<WebsocketClient>();
-            services.TryAddSingleton<EventSubWebsocketClient>();
+            services.TryAddSingleton(x => new EventSubWebsocketClient(x.GetRequiredService<ILogger<EventSubWebsocketClient>>(), x.GetRequiredService<IEnumerable<INotificationHandler>>(), x.GetRequiredService<IServiceProvider>(), x.GetRequiredService<WebsocketClient>()));
             services.AddNotificationHandlers(typeof(INotificationHandler));
             return services;
         }

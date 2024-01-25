@@ -24,7 +24,7 @@ namespace TwitchLib.EventSub.Websockets.Example.NetStandard
                     services.AddLogging();
                     services.AddTwitchLibEventSubWebsockets();
 
-                    services.AddHostedService<WebsocketHostedService>();
+                    services.AddHostedService<WebsocketHostedServiceWithoutDI>();
                 });
     }
 }

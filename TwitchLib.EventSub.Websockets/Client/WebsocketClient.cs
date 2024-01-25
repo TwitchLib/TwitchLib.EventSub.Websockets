@@ -5,6 +5,7 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TwitchLib.EventSub.Core;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
 
 #if NET6_0_OR_GREATER
@@ -27,8 +28,8 @@ namespace TwitchLib.EventSub.Websockets.Client
         /// </summary>
         public bool IsFaulted => _webSocket.CloseStatus != WebSocketCloseStatus.Empty && _webSocket.CloseStatus != WebSocketCloseStatus.NormalClosure;
 
-        internal event EventHandler<DataReceivedArgs> OnDataReceived;
-        internal event EventHandler<ErrorOccuredArgs> OnErrorOccurred;
+        internal event AsyncEventHandler<DataReceivedArgs> OnDataReceived;
+        internal event AsyncEventHandler<ErrorOccuredArgs> OnErrorOccurred;
 
         private readonly ClientWebSocket _webSocket;
         private readonly ILogger<WebsocketClient> _logger;
