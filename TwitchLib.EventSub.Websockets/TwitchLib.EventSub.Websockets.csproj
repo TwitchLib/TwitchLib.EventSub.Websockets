@@ -29,7 +29,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
-    <PackageReference Include="TwitchLib.EventSub.Core" Version="2.5.1" />
 	<PackageReference Include="System.Text.Json" Version="7.0.2" />
   </ItemGroup>
 
@@ -43,6 +42,10 @@
 
   <ItemGroup>
 	<None Include="..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TwitchLib.EventSub.Core\TwitchLib.EventSub.Core\TwitchLib.EventSub.Core.csproj" />
   </ItemGroup>
 	
 </Project>
