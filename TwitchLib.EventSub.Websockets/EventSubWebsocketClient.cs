@@ -72,7 +72,10 @@ namespace TwitchLib.EventSub.Websockets
         /// Event that triggers on "channel.charity_campaign.stop" notifications
         /// </summary>
         public event AsyncEventHandler<ChannelCharityCampaignStopArgs> ChannelCharityCampaignStop;
-
+        /// <summary>
+        /// Event that triggers on channel.chat.message notifications
+        /// </summary>
+        public event AsyncEventHandler<ChannelChatMessageArgs> ChannelChatMessage;
         /// <summary>
         /// Event that triggers on "channel.cheer" notifications
         /// </summary>
