@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,15 +8,14 @@ using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging.Abstractions;
+using TwitchLib.EventSub.Core;
+using TwitchLib.EventSub.Core.Extensions;
+using TwitchLib.EventSub.Core.SubscriptionTypes.Channel;
 using TwitchLib.EventSub.Websockets.Client;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Stream;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.User;
-using TwitchLib.EventSub.Core;
-using TwitchLib.EventSub.Core.Extensions;
-using TwitchLib.EventSub.Core.SubscriptionTypes.Channel;
 using TwitchLib.EventSub.Websockets.Core.Handler;
 using TwitchLib.EventSub.Websockets.Core.Models;
 using TwitchLib.EventSub.Websockets.Core.NamingPolicies;
@@ -45,6 +45,11 @@ namespace TwitchLib.EventSub.Websockets
         /// Event that triggers when the websocket was successfully reconnected
         /// </summary>
         public event AsyncEventHandler WebsocketReconnected;
+
+        /// <summary>
+        /// Event that triggers on "channel.ad_break.begin" notifications
+        /// </summary>
+        public event AsyncEventHandler<ChannelAdBreakBeginArgs> ChannelAdBreakBegin;
 
         /// <summary>
         /// Event that triggers on "channel.ban" notifications
@@ -89,7 +94,7 @@ namespace TwitchLib.EventSub.Websockets
         /// Event that triggers on "channel.goal.progress" notifications
         /// </summary>
         public event AsyncEventHandler<ChannelGoalProgressArgs> ChannelGoalProgress;
-        
+
         /// <summary>
         /// Event that triggers on "channel.guest_star_guest.update" notifications
         /// </summary>
@@ -189,7 +194,7 @@ namespace TwitchLib.EventSub.Websockets
         /// Event that triggers on "channel.raid" notifications
         /// </summary>
         public event AsyncEventHandler<ChannelRaidArgs> ChannelRaid;
-        
+
         /// <summary>
         /// Event that triggers on "channel.shield_mode.begin" notifications
         /// </summary>
@@ -198,7 +203,7 @@ namespace TwitchLib.EventSub.Websockets
         /// Event that triggers on "channel.shield_mode.end" notifications
         /// </summary>
         public event AsyncEventHandler<ChannelShieldModeEndArgs> ChannelShieldModeEnd;
-        
+
         /// <summary>
         /// Event that triggers on "channel.shoutout.create" notifications
         /// </summary>
@@ -310,18 +315,18 @@ namespace TwitchLib.EventSub.Websockets
         public EventSubWebsocketClient(ILoggerFactory loggerFactory = null)
         {
             _loggerFactory = loggerFactory;
-            
-            _logger = _loggerFactory != null 
-                ? _loggerFactory.CreateLogger<EventSubWebsocketClient>() 
+
+            _logger = _loggerFactory != null
+                ? _loggerFactory.CreateLogger<EventSubWebsocketClient>()
                 : NullLogger<EventSubWebsocketClient>.Instance;
 
-            _websocketClient = _loggerFactory != null 
+            _websocketClient = _loggerFactory != null
                 ? new WebsocketClient(_loggerFactory.CreateLogger<WebsocketClient>())
                 : new WebsocketClient();
-            
+
             _websocketClient.OnDataReceived += OnDataReceived;
             _websocketClient.OnErrorOccurred += OnErrorOccurred;
-            
+
             var handlers = typeof(INotificationHandler)
                 .Assembly.ExportedTypes
                 .Where(x => typeof(INotificationHandler).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
@@ -329,11 +334,11 @@ namespace TwitchLib.EventSub.Websockets
                 .ToList();
 
             PrepareHandlers(handlers);
-            
+
             _reconnectComplete = false;
             _reconnectRequested = false;
         }
-        
+
         /// <summary>
         /// Connect to Twitch EventSub Websockets
         /// </summary>
