@@ -18,7 +18,7 @@ using TwitchLib.EventSub.Websockets.Core.EventArgs.Stream;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.User;
 using TwitchLib.EventSub.Websockets.Core.Handler;
 using TwitchLib.EventSub.Websockets.Core.Models;
-using TwitchLib.EventSub.Websockets.Core.NamingPolicies;
+using TwitchLib.EventSub.Websockets.Extensions;
 
 namespace TwitchLib.EventSub.Websockets
 {
@@ -282,8 +282,8 @@ namespace TwitchLib.EventSub.Websockets
         private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
-            PropertyNamingPolicy = new SnakeCaseNamingPolicy(),
-            DictionaryKeyPolicy = new SnakeCaseNamingPolicy()
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+            DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower
         };
 
         private const string WEBSOCKET_URL = "wss://eventsub.wss.twitch.tv/ws";
@@ -433,7 +433,7 @@ namespace TwitchLib.EventSub.Websockets
                     await Task.Delay(100);
                 }
 
-                _logger?.LogError($"Websocket reconnect for {SessionId} failed!");
+                _logger?.LogReconnectFailed(SessionId);
 
                 return false;
             }
@@ -509,7 +509,8 @@ namespace TwitchLib.EventSub.Websockets
             _lastReceived = DateTimeOffset.Now;
 
             var json = JsonDocument.Parse(e.Message);
-            var messageType = json.RootElement.GetProperty("metadata").GetProperty("message_type").GetString();
+            var metadata = json.RootElement.GetProperty("metadata"u8);
+            var messageType = metadata.GetProperty("message_type"u8).GetString();
             switch (messageType)
             {
                 case "session_welcome":
@@ -525,7 +526,7 @@ namespace TwitchLib.EventSub.Websockets
                     HandleKeepAlive(e.Message);
                     break;
                 case "notification":
-                    var subscriptionType = json.RootElement.GetProperty("metadata").GetProperty("subscription_type").GetString();
+                    var subscriptionType = metadata.GetProperty("subscription_type"u8).GetString();
                     if (string.IsNullOrWhiteSpace(subscriptionType))
                     {
                         await ErrorOccurred.InvokeAsync(this, new ErrorOccuredArgs { Exception = new ArgumentNullException(nameof(subscriptionType)), Message = "Unable to determine subscription type!" });
@@ -537,8 +538,8 @@ namespace TwitchLib.EventSub.Websockets
                     HandleRevocation(e.Message);
                     break;
                 default:
-                    _logger?.LogWarning($"Unknown message type: {messageType}");
-                    _logger?.LogDebug(e.Message);
+                    _logger?.LogUnknownMessageType(messageType);
+                    _logger?.LogMessage(e.Message);
                     break;
             }
         }
@@ -559,13 +560,13 @@ namespace TwitchLib.EventSub.Websockets
         /// <param name="message">notification message received from Twitch EventSub</param>
         private void HandleReconnect(string message)
         {
-            _logger?.LogWarning($"Reconnect for {SessionId} requested!");
+            _logger?.LogReconnectRequested(SessionId);
             var data = JsonSerializer.Deserialize<EventSubWebsocketSessionInfoMessage>(message, _jsonSerializerOptions);
             _reconnectRequested = true;
 
             Task.Run(async () => await ReconnectAsync(new Uri(data?.Payload.Session.ReconnectUrl ?? WEBSOCKET_URL)));
 
-            _logger?.LogDebug(message);
+            _logger?.LogMessage(message);
         }
 
         /// <summary>
@@ -585,11 +586,11 @@ namespace TwitchLib.EventSub.Websockets
             SessionId = data.Payload.Session.Id;
             var keepAliveTimeout = data.Payload.Session.KeepaliveTimeoutSeconds + data.Payload.Session.KeepaliveTimeoutSeconds * 0.2;
 
-            _keepAliveTimeout = keepAliveTimeout.HasValue ? TimeSpan.FromSeconds(keepAliveTimeout.Value) : TimeSpan.FromSeconds(10);
+            _keepAliveTimeout = TimeSpan.FromSeconds(keepAliveTimeout ?? 10);
 
             await WebsocketConnected.InvokeAsync(this, new WebsocketConnectedArgs { IsRequestedReconnect = _reconnectRequested });
 
-            _logger?.LogDebug(message);
+            _logger?.LogMessage(message);
         }
 
         /// <summary>
@@ -601,8 +602,8 @@ namespace TwitchLib.EventSub.Websockets
             var data = JsonSerializer.Deserialize<EventSubWebsocketSessionInfoMessage>(message);
 
             if (data != null)
-                _logger?.LogCritical($"Websocket {data.Payload.Session.Id} disconnected at {data.Payload.Session.DisconnectedAt}. Reason: {data.Payload.Session.DisconnectReason}");
-
+                _logger?.LogForceDisconnected(data.Payload.Session.Id, data.Payload.Session.DisconnectedAt, data.Payload.Session.DisconnectReason);
+            
             await WebsocketDisconnected.InvokeAsync(this, EventArgs.Empty);
         }
 
@@ -612,7 +613,7 @@ namespace TwitchLib.EventSub.Websockets
         /// <param name="message">notification message received from Twitch EventSub</param>
         private void HandleKeepAlive(string message)
         {
-            _logger?.LogDebug(message);
+            _logger?.LogMessage(message);
         }
 
         /// <summary>
@@ -625,7 +626,7 @@ namespace TwitchLib.EventSub.Websockets
             if (_handlers != null && _handlers.TryGetValue(subscriptionType, out var handler))
                 handler(this, message, _jsonSerializerOptions);
 
-            _logger?.LogDebug(message);
+            _logger?.LogMessage(message);
         }
 
         /// <summary>
@@ -637,7 +638,7 @@ namespace TwitchLib.EventSub.Websockets
             if (_handlers != null && _handlers.TryGetValue("revocation", out var handler))
                 handler(this, message, _jsonSerializerOptions);
 
-            _logger?.LogDebug(message);
+            _logger?.LogMessage(message);
         }
 
         /// <summary>
@@ -649,7 +650,7 @@ namespace TwitchLib.EventSub.Websockets
         {
             var fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic);
 
-            if (!(fInfo?.GetValue(this) is MulticastDelegate multi))
+            if (fInfo?.GetValue(this) is not MulticastDelegate multi)
                 return;
 
             foreach (var del in multi.GetInvocationList())
