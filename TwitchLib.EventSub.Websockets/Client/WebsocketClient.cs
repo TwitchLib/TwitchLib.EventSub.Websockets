@@ -190,7 +190,9 @@ namespace TwitchLib.EventSub.Websockets.Client
                         if (buffer.Array == null)
                             continue;
 
-                        await memory.WriteAsync(buffer.Array, buffer.Offset, receiveResult.Count);
+#pragma warning disable CA1849
+                        memory.Write(buffer.Array, buffer.Offset, receiveResult.Count);
+#pragma warning restore CA1849
                         payloadSize += receiveResult.Count;
                     } while (!receiveResult.EndOfMessage);
 
