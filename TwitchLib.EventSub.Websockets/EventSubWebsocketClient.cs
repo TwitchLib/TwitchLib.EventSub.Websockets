@@ -586,7 +586,7 @@ namespace TwitchLib.EventSub.Websockets
             SessionId = data.Payload.Session.Id;
             var keepAliveTimeout = data.Payload.Session.KeepaliveTimeoutSeconds + data.Payload.Session.KeepaliveTimeoutSeconds * 0.2;
 
-            _keepAliveTimeout = _keepAliveTimeout = TimeSpan.FromSeconds(keepAliveTimeout ?? 10);
+            _keepAliveTimeout = TimeSpan.FromSeconds(keepAliveTimeout ?? 10);
 
             await WebsocketConnected.InvokeAsync(this, new WebsocketConnectedArgs { IsRequestedReconnect = _reconnectRequested });
 
