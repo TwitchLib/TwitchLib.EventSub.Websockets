@@ -120,7 +120,12 @@ namespace TwitchLib.EventSub.Websockets.Client
                         
                         if (payloadSize + receiveResult.Count >= storeSize)
                         {
-                            storeSize += 4096;
+                            storeSize += 
+#if NET8_0_OR_GREATER
+                            int.Max(4096, receiveResult.Count);
+#else
+                            Math.Max(4096, receiveResult.Count);
+#endif
                             var newStore = MemoryPool<byte>.Shared.Rent(storeSize).Memory;
                             store.CopyTo(newStore);
                             store = newStore;
