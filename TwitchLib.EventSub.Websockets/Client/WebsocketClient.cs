@@ -25,7 +25,7 @@ namespace TwitchLib.EventSub.Websockets.Client
         /// </summary>
         public bool IsConnected => _webSocket.State == WebSocketState.Open;
         /// <summary>
-        /// Determines if the Client is has encountered an unrecoverable issue based on WebsocketState
+        /// Determines if the Client has encountered an unrecoverable issue based on WebsocketState
         /// </summary>
         public bool IsFaulted => _webSocket.CloseStatus != WebSocketCloseStatus.Empty && _webSocket.CloseStatus != WebSocketCloseStatus.NormalClosure;
 
@@ -120,7 +120,7 @@ namespace TwitchLib.EventSub.Websockets.Client
                         
                         if (payloadSize + receiveResult.Count >= storeSize)
                         {
-                            storeSize *= 2;
+                            storeSize += 4096;
                             var newStore = MemoryPool<byte>.Shared.Rent(storeSize).Memory;
                             store.CopyTo(newStore);
                             store = newStore;
