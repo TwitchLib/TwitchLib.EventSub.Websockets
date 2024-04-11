@@ -509,7 +509,8 @@ namespace TwitchLib.EventSub.Websockets
             _lastReceived = DateTimeOffset.Now;
 
             var json = JsonDocument.Parse(e.Message);
-            var messageType = json.RootElement.GetProperty("metadata").GetProperty("message_type").GetString();
+            var metadata = json.RootElement.GetProperty("metadata"u8);
+            var messageType = metadata.GetProperty("message_type"u8).GetString();
             switch (messageType)
             {
                 case "session_welcome":
@@ -525,7 +526,7 @@ namespace TwitchLib.EventSub.Websockets
                     HandleKeepAlive(e.Message);
                     break;
                 case "notification":
-                    var subscriptionType = json.RootElement.GetProperty("metadata").GetProperty("subscription_type").GetString();
+                    var subscriptionType = metadata.GetProperty("subscription_type"u8).GetString();
                     if (string.IsNullOrWhiteSpace(subscriptionType))
                     {
                         await ErrorOccurred.InvokeAsync(this, new ErrorOccuredArgs { Exception = new ArgumentNullException(nameof(subscriptionType)), Message = "Unable to determine subscription type!" });
@@ -585,7 +586,7 @@ namespace TwitchLib.EventSub.Websockets
             SessionId = data.Payload.Session.Id;
             var keepAliveTimeout = data.Payload.Session.KeepaliveTimeoutSeconds + data.Payload.Session.KeepaliveTimeoutSeconds * 0.2;
 
-            _keepAliveTimeout = keepAliveTimeout.HasValue ? TimeSpan.FromSeconds(keepAliveTimeout.Value) : TimeSpan.FromSeconds(10);
+            _keepAliveTimeout = _keepAliveTimeout = TimeSpan.FromSeconds(keepAliveTimeout ?? 10);
 
             await WebsocketConnected.InvokeAsync(this, new WebsocketConnectedArgs { IsRequestedReconnect = _reconnectRequested });
 
