@@ -6,15 +6,12 @@ EventSub via Websockets is still in open beta.
 You can use it in production but Twitch may introduce breaking changes without prior notice.
 The same goes for this implementation until it reaches Version 1.0.0
 
-## Prerequisites
-- Currently we only support setup via Dependency Injection
-
 ## Resources
 If you need help on how to setup Dependency Injection in your Console or WPF Application you can have a look at these guides:
 - Console: https://dfederm.com/building-a-console-app-with-.net-generic-host/
 - WPF: https://laurentkempe.com/2019/09/03/WPF-and-dotnet-Generic-Host-with-dotnet-Core-3-0/
 
-You can also find a console app example for .NET 6 and for .NET Framework 4.8 in the repo.
+You can also find a console app example for .NET 8 and for .NET Framework 4.8 in the repo.
 
 ## Installation
 
@@ -124,4 +121,4 @@ namespace TwitchLib.EventSub.Websockets.Test
 
 Alternatively you can also just clone the examples:
 - .NET Framework 4.8 https://github.com/TwitchLib/TwitchLib.EventSub.Websockets/tree/main/TwitchLib.EventSub.Websockets.Example.NetStandard
-- .NET 6 -> https://github.com/TwitchLib/TwitchLib.EventSub.Websockets/tree/main/TwitchLib.EventSub.Websockets.Example
+- .NET 8 -> https://github.com/TwitchLib/TwitchLib.EventSub.Websockets/tree/main/TwitchLib.EventSub.Websockets.Example

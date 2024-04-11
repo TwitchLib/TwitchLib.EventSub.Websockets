@@ -1,26 +1,23 @@
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 
 namespace TwitchLib.EventSub.Websockets.Example.NetStandard
 {
-    public class WebsocketHostedService : IHostedService
+    public class WebsocketHostedServiceWithoutDI : IHostedService
     {
-        private readonly IConfiguration _configuration;
         private readonly ILogger<WebsocketHostedService> _logger;
         private readonly EventSubWebsocketClient _eventSubWebsocketClient;
-
-        public WebsocketHostedService(IConfiguration configuration ,ILogger<WebsocketHostedService> logger, EventSubWebsocketClient eventSubWebsocketClient)
+        
+        public WebsocketHostedServiceWithoutDI(ILogger<WebsocketHostedService> logger, ILoggerFactory loggerFactory)
         {
-            _configuration = configuration;
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-            _eventSubWebsocketClient = eventSubWebsocketClient ?? throw new ArgumentNullException(nameof(eventSubWebsocketClient));
+            _logger = logger;
+            _eventSubWebsocketClient = new EventSubWebsocketClient(loggerFactory);
+            
             _eventSubWebsocketClient.WebsocketConnected += OnWebsocketConnected;
             _eventSubWebsocketClient.WebsocketDisconnected += OnWebsocketDisconnected;
             _eventSubWebsocketClient.WebsocketReconnected += OnWebsocketReconnected;
@@ -28,7 +25,17 @@ namespace TwitchLib.EventSub.Websockets.Example.NetStandard
 
             _eventSubWebsocketClient.ChannelFollow += OnChannelFollow;
         }
+        
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            await _eventSubWebsocketClient.ConnectAsync();
+        }
 
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            await _eventSubWebsocketClient.DisconnectAsync();
+        }
+        
         private async Task OnErrorOccurred(object sender, ErrorOccuredArgs e)
         {
             _logger.LogError($"Websocket {_eventSubWebsocketClient.SessionId} - Error occurred!");
@@ -39,17 +46,7 @@ namespace TwitchLib.EventSub.Websockets.Example.NetStandard
             var eventData = e.Notification.Payload.Event;
             _logger.LogInformation($"{eventData.UserName} followed {eventData.BroadcasterUserName} at {eventData.FollowedAt}");
         }
-
-        public async Task StartAsync(CancellationToken cancellationToken)
-        {
-            await _eventSubWebsocketClient.ConnectAsync();
-        }
-
-        public async Task StopAsync(CancellationToken cancellationToken)
-        {
-            await _eventSubWebsocketClient.DisconnectAsync();
-        }
-
+        
         private async Task OnWebsocketConnected(object sender, WebsocketConnectedArgs e)
         {
             _logger.LogInformation($"Websocket {_eventSubWebsocketClient.SessionId} connected!");

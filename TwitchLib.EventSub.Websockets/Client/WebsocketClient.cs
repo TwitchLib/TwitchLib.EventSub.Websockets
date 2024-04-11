@@ -5,7 +5,9 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TwitchLib.EventSub.Core;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
+using TwitchLib.EventSub.Websockets.Extensions;
 
 #if NET6_0_OR_GREATER
 using System.Buffers;
@@ -23,12 +25,12 @@ namespace TwitchLib.EventSub.Websockets.Client
         /// </summary>
         public bool IsConnected => _webSocket.State == WebSocketState.Open;
         /// <summary>
-        /// Determines if the Client is has encountered an unrecoverable issue based on WebsocketState
+        /// Determines if the Client has encountered an unrecoverable issue based on WebsocketState
         /// </summary>
         public bool IsFaulted => _webSocket.CloseStatus != WebSocketCloseStatus.Empty && _webSocket.CloseStatus != WebSocketCloseStatus.NormalClosure;
 
-        internal event EventHandler<DataReceivedArgs> OnDataReceived;
-        internal event EventHandler<ErrorOccuredArgs> OnErrorOccurred;
+        internal event AsyncEventHandler<DataReceivedArgs> OnDataReceived;
+        internal event AsyncEventHandler<ErrorOccuredArgs> OnErrorOccurred;
 
         private readonly ClientWebSocket _webSocket;
         private readonly ILogger<WebsocketClient> _logger;
@@ -52,7 +54,7 @@ namespace TwitchLib.EventSub.Websockets.Client
         {
             try
             {
-                if (_webSocket.State == WebSocketState.Open || _webSocket.State == WebSocketState.Connecting)
+                if (_webSocket.State is WebSocketState.Open or WebSocketState.Connecting)
                     return true;
 
                 await _webSocket.ConnectAsync(url, CancellationToken.None);
@@ -78,7 +80,7 @@ namespace TwitchLib.EventSub.Websockets.Client
         {
             try
             {
-                if (_webSocket.State == WebSocketState.Open || _webSocket.State == WebSocketState.Connecting)
+                if (_webSocket.State is WebSocketState.Open or WebSocketState.Connecting)
                     await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
 
                 return true;
@@ -99,9 +101,10 @@ namespace TwitchLib.EventSub.Websockets.Client
         private async Task ProcessDataAsync()
         {
             const int minimumBufferSize = 256;
+            var storeSize = 4096;
             var decoder = Encoding.UTF8.GetDecoder();
 
-            var store = MemoryPool<byte>.Shared.Rent().Memory;
+            var store = MemoryPool<byte>.Shared.Rent(storeSize).Memory;
             var buffer = MemoryPool<byte>.Shared.Rent(minimumBufferSize).Memory;
 
             var payloadSize = 0;
@@ -114,6 +117,19 @@ namespace TwitchLib.EventSub.Websockets.Client
                     do
                     {
                         receiveResult = await _webSocket.ReceiveAsync(buffer, CancellationToken.None);
+                        
+                        if (payloadSize + receiveResult.Count >= storeSize)
+                        {
+                            storeSize += 
+#if NET8_0_OR_GREATER
+                            int.Max(4096, receiveResult.Count);
+#else
+                            Math.Max(4096, receiveResult.Count);
+#endif
+                            var newStore = MemoryPool<byte>.Shared.Rent(storeSize).Memory;
+                            store.CopyTo(newStore);
+                            store = newStore;
+                        }
 
                         buffer.CopyTo(store[payloadSize..]);
 
@@ -139,7 +155,7 @@ namespace TwitchLib.EventSub.Websockets.Client
                         case WebSocketMessageType.Binary:
                             break;
                         case WebSocketMessageType.Close:
-                            _logger?.LogCritical($"{(WebSocketCloseStatus)_webSocket.CloseStatus!} - {_webSocket.CloseStatusDescription!}");
+                            _logger?.LogWebsocketClosed((WebSocketCloseStatus)_webSocket.CloseStatus!, _webSocket.CloseStatusDescription!);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -179,7 +195,9 @@ namespace TwitchLib.EventSub.Websockets.Client
                         if (buffer.Array == null)
                             continue;
 
+#pragma warning disable CA1849
                         memory.Write(buffer.Array, buffer.Offset, receiveResult.Count);
+#pragma warning restore CA1849
                         payloadSize += receiveResult.Count;
                     } while (!receiveResult.EndOfMessage);
 
@@ -204,7 +222,7 @@ namespace TwitchLib.EventSub.Websockets.Client
                             break;
                         case WebSocketMessageType.Close:
                             if (_webSocket.CloseStatus != null)
-                                _logger?.LogCritical($"{(WebSocketCloseStatus) _webSocket.CloseStatus} - {_webSocket.CloseStatusDescription}");
+                                _logger?.LogWebsocketClosed((WebSocketCloseStatus)_webSocket.CloseStatus!, _webSocket.CloseStatusDescription!);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
