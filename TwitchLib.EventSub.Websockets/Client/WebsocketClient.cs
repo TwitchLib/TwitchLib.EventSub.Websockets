@@ -100,9 +100,10 @@ namespace TwitchLib.EventSub.Websockets.Client
         private async Task ProcessDataAsync()
         {
             const int minimumBufferSize = 256;
+            var storeSize = 4096;
             var decoder = Encoding.UTF8.GetDecoder();
 
-            var store = MemoryPool<byte>.Shared.Rent().Memory;
+            var store = MemoryPool<byte>.Shared.Rent(storeSize).Memory;
             var buffer = MemoryPool<byte>.Shared.Rent(minimumBufferSize).Memory;
 
             var payloadSize = 0;
@@ -115,6 +116,14 @@ namespace TwitchLib.EventSub.Websockets.Client
                     do
                     {
                         receiveResult = await _webSocket.ReceiveAsync(buffer, CancellationToken.None);
+                        
+                        if (payloadSize + receiveResult.Count >= storeSize)
+                        {
+                            storeSize *= 2;
+                            var newStore = MemoryPool<byte>.Shared.Rent(storeSize).Memory;
+                            store.CopyTo(newStore);
+                            store = newStore;
+                        }
 
                         buffer.CopyTo(store[payloadSize..]);
 
