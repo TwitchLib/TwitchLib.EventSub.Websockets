@@ -142,6 +142,15 @@ namespace TwitchLib.EventSub.Websockets
         public event AsyncEventHandler<ChannelModeratorArgs> ChannelModeratorRemove;
 
         /// <summary>
+        /// Event that triggers on "channel.vip.add" notifications
+        /// </summary>
+        public event AsyncEventHandler<ChannelVIPArgs> ChannelVIPAdd;
+        /// <summary>
+        /// Event that triggers on "channel.vip.remove" notifications
+        /// </summary>
+        public event AsyncEventHandler<ChannelVIPArgs> ChannelVIPRemove;
+
+        /// <summary>
         /// Event that triggers on "channel.channel_points_custom_reward.add" notifications
         /// </summary>
         public event AsyncEventHandler<ChannelPointsCustomRewardArgs> ChannelPointsCustomRewardAdd;
