@@ -17,10 +17,10 @@ You can also find a console app example for .NET 8 and for .NET Framework 4.8 in
 
 | NuGet            |       | [![TwitchLib.EventSub.Websockets][1]][2]                                       |
 | :--------------- | ----: | :--------------------------------------------------------------------------- |
-| Package Manager  | `PM>` | `Install-Package TwitchLib.EventSub.Websockets -Version 0.4.0`                 |
-| .NET CLI         | `>`   | `dotnet add package TwitchLib.EventSub.Websockets --version 0.4.0`             |
-| PackageReference |       | `<PackageReference Include="TwitchLib.EventSub.Websockets" Version="0.4.0" />` |
-| Paket CLI        | `>`   | `paket add TwitchLib.EventSub.Websockets --version 0.4.0`                      |
+| Package Manager  | `PM>` | `Install-Package TwitchLib.EventSub.Websockets -Version 0.5.0`                 |
+| .NET CLI         | `>`   | `dotnet add package TwitchLib.EventSub.Websockets --version 0.5.0`             |
+| PackageReference |       | `<PackageReference Include="TwitchLib.EventSub.Websockets" Version="0.5.0" />` |
+| Paket CLI        | `>`   | `paket add TwitchLib.EventSub.Websockets --version 0.5.0`                      |
 
 [1]: https://img.shields.io/nuget/v/TwitchLib.EventSub.Websockets.svg?label=TwitchLib.EventSub.Websockets
 [2]: https://www.nuget.org/packages/TwitchLib.EventSub.Websockets
@@ -78,7 +78,7 @@ namespace TwitchLib.EventSub.Websockets.Test
             await _eventSubWebsocketClient.DisconnectAsync();
         }
 
-        private void OnWebsocketConnected(object? sender, WebsocketConnectedArgs e)
+        private async Task OnWebsocketConnected(object sender, WebsocketConnectedArgs e)
         {
             _logger.LogInformation($"Websocket {_eventSubWebsocketClient.SessionId} connected!");
 
@@ -86,9 +86,9 @@ namespace TwitchLib.EventSub.Websockets.Test
             {
                 // subscribe to topics
             }
-         }
+        }
 
-        private async void OnWebsocketDisconnected(object? sender, EventArgs e)
+        private async Task OnWebsocketDisconnected(object sender, EventArgs e)
         {
             _logger.LogError($"Websocket {_eventSubWebsocketClient.SessionId} disconnected!");
 
@@ -100,17 +100,17 @@ namespace TwitchLib.EventSub.Websockets.Test
             }
         }
 
-        private void OnWebsocketReconnected(object? sender, EventArgs e)
+        private async Task OnWebsocketReconnected(object sender, EventArgs e)
         {
             _logger.LogWarning($"Websocket {_eventSubWebsocketClient.SessionId} reconnected");
-        }      
-      
-         private void OnErrorOccurred(object? sender, ErrorOccuredArgs e)
+        }
+
+        private async Task OnErrorOccurred(object sender, ErrorOccuredArgs e)
         {
             _logger.LogError($"Websocket {_eventSubWebsocketClient.SessionId} - Error occurred!");
         }
 
-        private void OnChannelFollow(object? sender, ChannelFollowArgs e)
+        private async Task OnChannelFollow(object sender, ChannelFollowArgs e)
         {
             var eventData = e.Notification.Payload.Event;
             _logger.LogInformation($"{eventData.UserName} followed {eventData.BroadcasterUserName} at {eventData.FollowedAt}");
@@ -120,5 +120,5 @@ namespace TwitchLib.EventSub.Websockets.Test
 ```
 
 Alternatively you can also just clone the examples:
-- .NET Framework 4.8 https://github.com/TwitchLib/TwitchLib.EventSub.Websockets/tree/main/TwitchLib.EventSub.Websockets.Example.NetStandard
+- .NET Framework 4.8 -> https://github.com/TwitchLib/TwitchLib.EventSub.Websockets/tree/main/TwitchLib.EventSub.Websockets.Example.NetStandard
 - .NET 8 -> https://github.com/TwitchLib/TwitchLib.EventSub.Websockets/tree/main/TwitchLib.EventSub.Websockets.Example
