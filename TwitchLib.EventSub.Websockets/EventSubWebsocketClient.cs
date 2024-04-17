@@ -144,11 +144,11 @@ namespace TwitchLib.EventSub.Websockets
         /// <summary>
         /// Event that triggers on "channel.vip.add" notifications
         /// </summary>
-        public event AsyncEventHandler<ChannelVIPArgs> ChannelVIPAdd;
+        public event AsyncEventHandler<ChannelVipArgs> ChannelVipAdd;
         /// <summary>
         /// Event that triggers on "channel.vip.remove" notifications
         /// </summary>
-        public event AsyncEventHandler<ChannelVIPArgs> ChannelVIPRemove;
+        public event AsyncEventHandler<ChannelVipArgs> ChannelVipRemove;
 
         /// <summary>
         /// Event that triggers on "channel.channel_points_custom_reward.add" notifications

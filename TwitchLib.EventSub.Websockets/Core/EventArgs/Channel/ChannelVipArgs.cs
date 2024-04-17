@@ -3,6 +3,6 @@ using TwitchLib.EventSub.Websockets.Core.Models;
 
 namespace TwitchLib.EventSub.Websockets.Core.EventArgs.Channel
 {
-    public class ChannelVIPArgs : TwitchLibEventSubEventArgs<EventSubNotification<ChannelVIP>>
+    public class ChannelVipArgs : TwitchLibEventSubEventArgs<EventSubNotification<ChannelVip>>
     { }
 }

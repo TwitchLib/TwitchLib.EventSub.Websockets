@@ -9,24 +9,24 @@ using TwitchLib.EventSub.Websockets.Core.Models;
 namespace TwitchLib.EventSub.Websockets.Handler.Channel.VIPs
 {
     /// <summary>
-    /// Handler for 'channel.vip.remove' notifications
+    /// Handler for 'channel.vip.add' notifications
     /// </summary>
-    public class ChannelVIPRemoveHandler : INotificationHandler
+    public class ChannelVipAddHandler : INotificationHandler
     {
         /// <inheritdoc />
-        public string SubscriptionType => "channel.vip.remove";
+        public string SubscriptionType => "channel.vip.add";
 
         /// <inheritdoc />
         public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
         {
             try
             {
-                var data = JsonSerializer.Deserialize<EventSubNotification<ChannelVIP>>(jsonString.AsSpan(), serializerOptions);
+                var data = JsonSerializer.Deserialize<EventSubNotification<ChannelVip>>(jsonString.AsSpan(), serializerOptions);
 
                 if (data is null)
                     throw new InvalidOperationException("Parsed JSON cannot be null!");
 
-                client.RaiseEvent("ChannelVIPRemove", new ChannelVIPArgs { Notification = data });
+                client.RaiseEvent("ChannelVipAdd", new ChannelVipArgs { Notification = data });
             }
             catch (Exception ex)
             {
