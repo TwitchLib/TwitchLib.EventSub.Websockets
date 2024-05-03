@@ -1,24 +1,16 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TwitchLib.EventSub.Websockets.Example;
 using TwitchLib.EventSub.Websockets.Extensions;
 
-namespace TwitchLib.EventSub.Websockets.Example
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+var builder = Host.CreateApplicationBuilder(args);
 
-        private static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureServices((hostContext, services) =>
-                {
-                    services.AddLogging();
-                    services.AddTwitchLibEventSubWebsockets();
+//Add services to the container.
+builder.Services.AddLogging();
+builder.Services.AddTwitchLibEventSubWebsockets();
+builder.Services.AddHostedService<WebsocketHostedService>();
 
-                    services.AddHostedService<WebsocketHostedService>();
-                });
-    }
-}
+var app = builder.Build();
+
+app.Run();
+
