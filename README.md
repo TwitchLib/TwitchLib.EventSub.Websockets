@@ -48,7 +48,7 @@ using System.Text.Json;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 
-namespace TwitchLib.EventSub.Websockets.Test
+namespace TwitchLib.EventSub.Websockets.Example
 {
     public class WebsocketHostedService : IHostedService
     {

@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,13 +10,11 @@ namespace TwitchLib.EventSub.Websockets.Example.NetStandard
 {
     public class WebsocketHostedService : IHostedService
     {
-        private readonly IConfiguration _configuration;
         private readonly ILogger<WebsocketHostedService> _logger;
         private readonly EventSubWebsocketClient _eventSubWebsocketClient;
 
-        public WebsocketHostedService(IConfiguration configuration ,ILogger<WebsocketHostedService> logger, EventSubWebsocketClient eventSubWebsocketClient)
+        public WebsocketHostedService(ILogger<WebsocketHostedService> logger, EventSubWebsocketClient eventSubWebsocketClient)
         {
-            _configuration = configuration;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _eventSubWebsocketClient = eventSubWebsocketClient ?? throw new ArgumentNullException(nameof(eventSubWebsocketClient));
