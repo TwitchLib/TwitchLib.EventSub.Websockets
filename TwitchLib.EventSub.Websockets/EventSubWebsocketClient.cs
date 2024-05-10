@@ -612,7 +612,7 @@ namespace TwitchLib.EventSub.Websockets
 
             if (data != null)
                 _logger?.LogForceDisconnected(data.Payload.Session.Id, data.Payload.Session.DisconnectedAt, data.Payload.Session.DisconnectReason);
-            
+
             await WebsocketDisconnected.InvokeAsync(this, EventArgs.Empty);
         }
 
@@ -655,16 +655,26 @@ namespace TwitchLib.EventSub.Websockets
         /// </summary>
         /// <param name="eventName">name of the event to raise</param>
         /// <param name="args">args to pass with the event</param>
-        internal void RaiseEvent(string eventName, object args = null)
+        internal async void RaiseEvent(string eventName, object args = null)
         {
             var fInfo = GetType().GetField(eventName, BindingFlags.Instance | BindingFlags.NonPublic);
 
             if (fInfo?.GetValue(this) is not MulticastDelegate multi)
                 return;
 
+            var parameters = new object[] { this, args ?? EventArgs.Empty };
             foreach (var del in multi.GetInvocationList())
             {
-                del.Method.Invoke(del.Target, args == null ? new object[] { this, EventArgs.Empty } : new[] { this, args });
+                try
+                {
+                    var result = del.Method.Invoke(del.Target, parameters);
+                    if (result is Task task)
+                        await task;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogRaiseEventExeption(eventName, ex);
+                }
             }
         }
     }

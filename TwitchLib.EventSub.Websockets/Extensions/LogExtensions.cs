@@ -7,9 +7,12 @@ namespace TwitchLib.EventSub.Websockets.Extensions
 {
     internal static partial class LogExtensions
     {
+        [LoggerMessage(LogLevel.Error, "Exeption was throw when raising '{eventName}' event.")]
+        public static partial void LogRaiseEventExeption(this ILogger<EventSubWebsocketClient> logger, string eventName, Exception ex);
+
         [LoggerMessage(LogLevel.Debug, "{message}")]
         public static partial void LogMessage(this ILogger<EventSubWebsocketClient> logger, string message);
-        
+
         [LoggerMessage(LogLevel.Critical, "Websocket {sessionId} disconnected at {disconnectedAt}. Reason: {disconnectReason}")]
         public static partial void LogForceDisconnected(this ILogger<EventSubWebsocketClient> logger, string sessionId, DateTime? disconnectedAt, string disconnectReason);
         
