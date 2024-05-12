@@ -243,6 +243,16 @@ namespace TwitchLib.EventSub.Websockets
         public event AsyncEventHandler<ChannelSubscriptionMessageArgs> ChannelSubscriptionMessage;
 
         /// <summary>
+        /// Event that triggers on "channel.suspicious_user.message" notifications
+        /// </summary>
+        public event AsyncEventHandler<ChannelSuspiciousUserMessageArgs> ChannelSuspiciousUserMessage;
+
+        /// <summary>
+        /// Event that triggers on "channel.suspicious_user.update" notifications
+        /// </summary>
+        public event AsyncEventHandler<ChannelSuspiciousUserUpdateArgs> ChannelSuspiciousUserUpdate;
+
+        /// <summary>
         /// Event that triggers on "channel.unban" notifications
         /// </summary>
         public event AsyncEventHandler<ChannelUnbanArgs> ChannelUnban;
