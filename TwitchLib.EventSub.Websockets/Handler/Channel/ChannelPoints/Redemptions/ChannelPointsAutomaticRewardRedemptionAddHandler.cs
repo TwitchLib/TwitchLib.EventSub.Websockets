@@ -8,7 +8,7 @@ using TwitchLib.EventSub.Websockets.Core.Models;
 
 namespace TwitchLib.EventSub.Websockets.Handler.Channel.ChannelPoints.Redemptions;
 /// <summary>
-/// Handler for 'channel.channel_points_custom_reward_redemption.add' notifications
+/// Handler for 'channel.channel_points_automatic_reward_redemption.add' notifications
 /// </summary>
 public class ChannelPointsAutomaticRewardRedemptionAddHandler : INotificationHandler
 {
