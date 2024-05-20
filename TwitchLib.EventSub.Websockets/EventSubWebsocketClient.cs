@@ -164,6 +164,11 @@ namespace TwitchLib.EventSub.Websockets
         public event AsyncEventHandler<ChannelPointsCustomRewardArgs> ChannelPointsCustomRewardUpdate;
 
         /// <summary>
+        /// Event that triggers on "channel.channel_points_automatic_reward_redemption.add" notifications
+        /// </summary>
+        public event AsyncEventHandler<ChannelPointsAutomaticRewardRedemptionArgs> ChannelPointsAutomaticRewardRedemptionAdd;
+
+        /// <summary>
         /// Event that triggers on "channel.channel_points_custom_reward_redemption.add" notifications
         /// </summary>
         public event AsyncEventHandler<ChannelPointsCustomRewardRedemptionArgs> ChannelPointsCustomRewardRedemptionAdd;
