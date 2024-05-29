@@ -91,7 +91,7 @@ namespace TwitchLib.EventSub.Websockets.Test
                 {
                     { "broadcaster_user_id", someUserId }
                 };
-                var subscriptionResponse = await TwitchApi.Helix.EventSub.CreateEventSubSubscriptionAsync("channel.follow", "1", conditions,
+                var subscriptionResponse = await TwitchApi.Helix.EventSub.CreateEventSubSubscriptionAsync("channel.follow", "2", conditions,
                 EventSubTransportMethod.Websocket, _eventSubWebsocketClient.SessionId);
 
                 You can find more examples on the subscription types and their requirements here https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/
