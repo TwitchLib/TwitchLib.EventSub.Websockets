@@ -84,7 +84,18 @@ namespace TwitchLib.EventSub.Websockets.Test
 
             if (!e.IsRequestedReconnect)
             {
-                // subscribe to topics
+                /*
+                Subscribe to topics via the TwitchApi.Helix.EventSub object.
+
+                var conditions = new Dictionary<string, string>()
+                {
+                    { "broadcaster_user_id", someUserId }
+                };
+                var subscriptionResponse = await TwitchApi.Helix.EventSub.CreateEventSubSubscriptionAsync("channel.subscribe", "1", conditions,
+                EventSubTransportMethod.Websocket, _eventSubWebsocketClient.SessionId);
+
+                You can find more examples on the subscription types and their requirements here https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/
+                */
             }
          }
 
