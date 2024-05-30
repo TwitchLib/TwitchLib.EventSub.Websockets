@@ -95,6 +95,7 @@ namespace TwitchLib.EventSub.Websockets.Test
                 EventSubTransportMethod.Websocket, _eventSubWebsocketClient.SessionId);
 
                 You can find more examples on the subscription types and their requirements here https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/
+                Prerequisite: Twitchlib.Api nuget package installed (included in the Twitchlib package automatically)
                 */
             }
          }
