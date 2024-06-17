@@ -32,7 +32,7 @@ namespace TwitchLib.EventSub.Websockets.Client
         internal event AsyncEventHandler<DataReceivedArgs> OnDataReceived;
         internal event AsyncEventHandler<ErrorOccuredArgs> OnErrorOccurred;
 
-        private readonly ClientWebSocket _webSocket;
+        private ClientWebSocket _webSocket;
         private readonly ILogger<WebsocketClient> _logger;
 
         /// <summary>
@@ -56,6 +56,8 @@ namespace TwitchLib.EventSub.Websockets.Client
             {
                 if (_webSocket.State is WebSocketState.Open or WebSocketState.Connecting)
                     return true;
+                if (_webSocket.State is WebSocketState.Closed)  //after a socken is closed it cannot be reopened
+                    _webSocket = new();
 
                 await _webSocket.ConnectAsync(url, CancellationToken.None);
 
