@@ -5,10 +5,10 @@
 	<PackageId>TwitchLib.EventSub.Websockets</PackageId>
     <Title>TwitchLib.EventSub.Websockets</Title>
 	<Authors>swiftyspiffy, Prom3theu5, Syzuna, LuckyNoS7evin</Authors>
-	<VersionPrefix>0.5.0</VersionPrefix>
+	<VersionPrefix>0.6.0</VersionPrefix>
 	<VersionSuffix>$(VersionSuffix)</VersionSuffix>
-	<AssemblyVersion>0.5.0</AssemblyVersion>
-	<FileVersion>0.5.0</FileVersion>
+	<AssemblyVersion>0.6.0</AssemblyVersion>
+	<FileVersion>0.6.0</FileVersion>
 	<Description>EventSub Websockets (also known as EventSockets) Client Library</Description>
 	<PackageIconUrl>https://cdn.syzuna-programs.de/images/twitchlib.png</PackageIconUrl>
 	<PackageProjectUrl>https://github.com/TwitchLib/TwitchLib.EventSub.Websockets</PackageProjectUrl>
