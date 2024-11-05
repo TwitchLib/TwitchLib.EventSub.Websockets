@@ -11,7 +11,7 @@ jobs:
 
    steps:
    - uses: actions/checkout@v4
-   - uses: benjlevesque/short-sha@v2.2
+   - uses: benjlevesque/short-sha@v3.0
      id: short-sha
    - name: Setup .NET
      uses: actions/setup-dotnet@v3
