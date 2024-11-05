@@ -281,6 +281,11 @@ namespace TwitchLib.EventSub.Websockets
         /// </summary>
         public event AsyncEventHandler<UserUpdateArgs> UserUpdate;
 
+        /// <summary>
+        /// Event that triggers on "user.whisper.message" notifications
+        /// </summary>
+        public event AsyncEventHandler<UserWhisperMessageArgs> UserWhisperMessage;
+
         #endregion
 
         /// <summary>
