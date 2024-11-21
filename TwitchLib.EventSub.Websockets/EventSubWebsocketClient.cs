@@ -77,6 +77,10 @@ namespace TwitchLib.EventSub.Websockets
         /// </summary>
         public event AsyncEventHandler<ChannelChatMessageArgs> ChannelChatMessage;
         /// <summary>
+        /// Event that triggers on "channel.chat.message_delete" notifications
+        /// </summary>
+        public event AsyncEventHandler<ChannelChatMessageDeleteArgs> ChannelChatMessageDelete;
+        /// <summary>
         /// Event that triggers on "channel.cheer" notifications
         /// </summary>
         public event AsyncEventHandler<ChannelCheerArgs> ChannelCheer;
