@@ -296,6 +296,16 @@ namespace TwitchLib.EventSub.Websockets
         /// </summary>
         public event AsyncEventHandler<UserWhisperMessageArgs> UserWhisperMessage;
 
+        /// <summary>
+        /// Event that triggers on "channel.unban_request.create" notifications
+        /// </summary>
+        public event AsyncEventHandler<ChannelUnbanRequestCreateArgs> ChannelUnbanRequestCreate;
+
+        /// <summary>
+        /// Event that triggers on "channel.unban_request.resolve" notifications
+        /// </summary>
+        public event AsyncEventHandler<ChannelUnbanRequestResolveArgs> ChannelUnbanRequestResolve;
+
         #endregion
 
         /// <summary>
