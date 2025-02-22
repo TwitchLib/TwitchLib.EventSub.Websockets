@@ -1,8 +1,11 @@
+using BreganTwitchBot.Domain.Data.TwitchBot;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using TwitchLib.Api.Core.Enums;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 
@@ -23,7 +26,22 @@ namespace TwitchLib.EventSub.Websockets.Example
             _eventSubWebsocketClient.WebsocketReconnected += OnWebsocketReconnected;
             _eventSubWebsocketClient.ErrorOccurred += OnErrorOccurred;
 
+            _eventSubWebsocketClient.ChannelUnbanRequestCreate += OnChannelUnbanRequestCreate;
+            _eventSubWebsocketClient.ChannelUnbanRequestResolve += OnChannelUnbanRequestResolve;
+
             _eventSubWebsocketClient.ChannelFollow += OnChannelFollow;
+        }
+
+        private async Task OnChannelUnbanRequestResolve(object sender, ChannelUnbanRequestResolveArgs args)
+        {
+            var t = args.Notification.Payload.Event;
+            Console.WriteLine();
+        }
+
+        private async Task OnChannelUnbanRequestCreate(object sender, ChannelUnbanRequestCreateArgs args)
+        {
+            var t = args.Notification.Payload.Event;
+            Console.WriteLine();
         }
 
         private async Task OnErrorOccurred(object sender, ErrorOccuredArgs e)
@@ -53,6 +71,11 @@ namespace TwitchLib.EventSub.Websockets.Example
 
             if (!e.IsRequestedReconnect)
             {
+                var tbc = new TwitchApiConnection();
+                tbc.Connect();
+
+                await TwitchApiConnection.ApiClient.Helix.EventSub.CreateEventSubSubscriptionAsync("channel.unban_request.create", "1", new Dictionary<string, string>() { { "broadcaster_user_id", "124237912" }, { "moderator_user_id", "797466895" } }, EventSubTransportMethod.Websocket, _eventSubWebsocketClient.SessionId);
+                await TwitchApiConnection.ApiClient.Helix.EventSub.CreateEventSubSubscriptionAsync("channel.unban_request.resolve", "1", new Dictionary<string, string>() { { "broadcaster_user_id", "124237912" }, { "moderator_user_id", "797466895" } }, EventSubTransportMethod.Websocket, _eventSubWebsocketClient.SessionId);
                 // subscribe to topics
             }
         }
