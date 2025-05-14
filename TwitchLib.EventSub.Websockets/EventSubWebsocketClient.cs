@@ -140,10 +140,14 @@ namespace TwitchLib.EventSub.Websockets
         /// </summary>
         public event AsyncEventHandler<ChannelHypeTrainProgressArgs> ChannelHypeTrainProgress;
 
-        /// <summary>
-        /// Event that triggers on "channel.moderator.add" notifications
-        /// </summary>
-        public event AsyncEventHandler<ChannelModeratorArgs> ChannelModeratorAdd;
+				/// <summary>
+				/// Event that triggers on "channel.moderate" notifications
+				/// </summary>
+				public event AsyncEventHandler<ChannelModerateArgs> ChannelModerate;
+				/// <summary>
+				/// Event that triggers on "channel.moderator.add" notifications
+				/// </summary>
+				public event AsyncEventHandler<ChannelModeratorArgs> ChannelModeratorAdd;
         /// <summary>
         /// Event that triggers on "channel.moderator.remove" notifications
         /// </summary>
