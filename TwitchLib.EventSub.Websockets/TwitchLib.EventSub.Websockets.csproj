@@ -20,12 +20,13 @@
 	<PackageReleaseNotes>Updated TwitchLib.EventSub.Core for the latest SubscriptionType changes</PackageReleaseNotes>
 	<NeutralLanguage>en-US</NeutralLanguage>
 	<ImplicitUsings>disable</ImplicitUsings>
-	<Nullable>disable</Nullable>
+	<Nullable>enable</Nullable>
 	<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	<AnalysisLevel>latest-all</AnalysisLevel>
 	<EnableNETAnalyzers>True</EnableNETAnalyzers>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<LangVersion>latest</LangVersion>
+    <NoWarn>1701;1702;CA1003</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

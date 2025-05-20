@@ -8,10 +8,15 @@ using TwitchLib.EventSub.Websockets.Core.Models;
 
 namespace TwitchLib.EventSub.Websockets.Handler.Channel.Chat
 {
+    /// <summary>
+    /// Handler for 'channel.chat.notification' notifications
+    /// </summary>
     public class ChatNotificationHandler : INotificationHandler
     {
+        /// <inheritdoc />
         public string SubscriptionType => "channel.chat.notification";
 
+        /// <inheritdoc />
         public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
         {
             try
