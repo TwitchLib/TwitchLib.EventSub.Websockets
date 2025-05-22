@@ -29,17 +29,17 @@ namespace TwitchLib.EventSub.Websockets.Client
         /// </summary>
         public bool IsFaulted => _webSocket.CloseStatus != WebSocketCloseStatus.Empty && _webSocket.CloseStatus != WebSocketCloseStatus.NormalClosure;
 
-        internal event AsyncEventHandler<DataReceivedArgs> OnDataReceived;
-        internal event AsyncEventHandler<ErrorOccuredArgs> OnErrorOccurred;
+        internal event AsyncEventHandler<DataReceivedArgs>? OnDataReceived;
+        internal event AsyncEventHandler<ErrorOccuredArgs>? OnErrorOccurred;
 
         private ClientWebSocket _webSocket;
-        private readonly ILogger<WebsocketClient> _logger;
+        private readonly ILogger<WebsocketClient>? _logger;
 
         /// <summary>
         /// Constructor to create a new Websocket client with a logger
         /// </summary>
         /// <param name="logger">Logger used by the websocket client to print various state info</param>
-        public WebsocketClient(ILogger<WebsocketClient> logger = null)
+        public WebsocketClient(ILogger<WebsocketClient>? logger = null)
         {
             _webSocket = new ClientWebSocket();
             _logger = logger;
