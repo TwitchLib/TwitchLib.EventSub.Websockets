@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -585,24 +586,25 @@ namespace TwitchLib.EventSub.Websockets
         /// <param name="e">EventArgs send with the event. <see cref="DataReceivedArgs"/></param>
         private async Task OnDataReceived(object sender, DataReceivedArgs e)
         {
+            _logger?.LogMessage(e.Bytes);
             _lastReceived = DateTimeOffset.Now;
 
-            var json = JsonDocument.Parse(e.Message);
+            var json = JsonDocument.Parse(e.Bytes);
             var metadata = json.RootElement.GetProperty("metadata"u8);
             var messageType = metadata.GetProperty("message_type"u8).GetString();
             switch (messageType)
             {
                 case "session_welcome":
-                    await HandleWelcome(e.Message);
+                    await HandleWelcome(e.Bytes);
                     break;
                 case "session_disconnect":
-                    await HandleDisconnect(e.Message);
+                    await HandleDisconnect(e.Bytes);
                     break;
                 case "session_reconnect":
-                    HandleReconnect(e.Message);
+                    HandleReconnect(e.Bytes);
                     break;
                 case "session_keepalive":
-                    HandleKeepAlive(e.Message);
+                    HandleKeepAlive(e.Bytes);
                     break;
                 case "notification":
                     var subscriptionType = metadata.GetProperty("subscription_type"u8).GetString();
@@ -611,14 +613,15 @@ namespace TwitchLib.EventSub.Websockets
                         await ErrorOccurred.InvokeAsync(this, new ErrorOccuredArgs { Exception = new ArgumentNullException(nameof(subscriptionType)), Message = "Unable to determine subscription type!" });
                         break;
                     }
-                    HandleNotification(e.Message, subscriptionType);
+                    var message1 = Encoding.UTF8.GetString(e.Bytes);
+                    HandleNotification(message1, subscriptionType!);
                     break;
                 case "revocation":
-                    HandleRevocation(e.Message);
+                    var message2 = Encoding.UTF8.GetString(e.Bytes);
+                    HandleRevocation(message2);
                     break;
                 default:
                     _logger?.LogUnknownMessageType(messageType);
-                    _logger?.LogMessage(e.Message);
                     break;
             }
         }
@@ -637,22 +640,20 @@ namespace TwitchLib.EventSub.Websockets
         /// Handles 'session_reconnect' notifications
         /// </summary>
         /// <param name="message">notification message received from Twitch EventSub</param>
-        private void HandleReconnect(string message)
+        private void HandleReconnect(byte[] message)
         {
             _logger?.LogReconnectRequested(SessionId);
             var data = JsonSerializer.Deserialize<EventSubWebsocketSessionInfoMessage>(message, _jsonSerializerOptions);
             _reconnectRequested = true;
 
             Task.Run(async () => await ReconnectAsync(new Uri(data?.Payload.Session.ReconnectUrl ?? WEBSOCKET_URL)));
-
-            _logger?.LogMessage(message);
         }
 
         /// <summary>
         /// Handles 'session_welcome' notifications
         /// </summary>
         /// <param name="message">notification message received from Twitch EventSub</param>
-        private async ValueTask HandleWelcome(string message)
+        private async ValueTask HandleWelcome(byte[] message)
         {
             var data = JsonSerializer.Deserialize<EventSubWebsocketSessionInfoMessage>(message, _jsonSerializerOptions);
 
@@ -668,15 +669,13 @@ namespace TwitchLib.EventSub.Websockets
             _keepAliveTimeout = TimeSpan.FromSeconds(keepAliveTimeout ?? 10);
 
             await WebsocketConnected.InvokeAsync(this, new WebsocketConnectedArgs { IsRequestedReconnect = _reconnectRequested });
-
-            _logger?.LogMessage(message);
         }
 
         /// <summary>
         /// Handles 'session_disconnect' notifications
         /// </summary>
         /// <param name="message">notification message received from Twitch EventSub</param>
-        private async Task HandleDisconnect(string message)
+        private async Task HandleDisconnect(byte[] message)
         {
             var data = JsonSerializer.Deserialize<EventSubWebsocketSessionInfoMessage>(message);
 
@@ -690,9 +689,9 @@ namespace TwitchLib.EventSub.Websockets
         /// Handles 'session_keepalive' notifications
         /// </summary>
         /// <param name="message">notification message received from Twitch EventSub</param>
-        private void HandleKeepAlive(string message)
+        private void HandleKeepAlive(byte[] message)
         {
-            _logger?.LogMessage(message);
+            _ = message;
         }
 
         /// <summary>
@@ -704,8 +703,6 @@ namespace TwitchLib.EventSub.Websockets
         {
             if (_handlers.TryGetValue(subscriptionType, out var handler))
                 handler(this, message, _jsonSerializerOptions);
-
-            _logger?.LogMessage(message);
         }
 
         /// <summary>
@@ -716,8 +713,6 @@ namespace TwitchLib.EventSub.Websockets
         {
             if (_handlers.TryGetValue("revocation", out var handler))
                 handler(this, message, _jsonSerializerOptions);
-
-            _logger?.LogMessage(message);
         }
 
         /// <summary>

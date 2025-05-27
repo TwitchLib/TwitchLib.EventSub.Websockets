@@ -94,7 +94,6 @@ namespace TwitchLib.EventSub.Websockets.Client
             }
         }
 
-#if NET6_0_OR_GREATER
         /// <summary>
         /// Background operation to process incoming data via the websocket
         /// </summary>
@@ -102,38 +101,43 @@ namespace TwitchLib.EventSub.Websockets.Client
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         private async Task ProcessDataAsync()
         {
-            const int minimumBufferSize = 256;
-            var storeSize = 4096;
-            var decoder = Encoding.UTF8.GetDecoder();
-
-            var store = MemoryPool<byte>.Shared.Rent(storeSize).Memory;
-            var buffer = MemoryPool<byte>.Shared.Rent(minimumBufferSize).Memory;
-
+            const int bufferLength = 4096;
+#if NETSTANDARD2_0
+            var buffer = new ArraySegment<byte>(new byte[bufferLength]);
+#else
+            var buffer = new Memory<byte>(new byte[bufferLength]);
+#endif
+            var store = new byte[4096];
             var payloadSize = 0;
 
             while (IsConnected)
             {
                 try
                 {
+#if NETSTANDARD2_0
+                    WebSocketReceiveResult receiveResult;
+#else
                     ValueWebSocketReceiveResult receiveResult;
+#endif
                     do
                     {
                         receiveResult = await _webSocket.ReceiveAsync(buffer, CancellationToken.None);
-                        
-                        if (payloadSize + receiveResult.Count >= storeSize)
+
+                        if (payloadSize + receiveResult.Count >= store.Length)
                         {
-                            storeSize += 
-#if NET8_0_OR_GREATER
-                            int.Max(4096, receiveResult.Count);
-#else
-                            Math.Max(4096, receiveResult.Count);
-#endif
-                            var newStore = MemoryPool<byte>.Shared.Rent(storeSize).Memory;
-                            store.CopyTo(newStore);
+                            var newStoreLength = store.Length + Math.Max(bufferLength, receiveResult.Count);
+                            var newStore = new byte[newStoreLength];
+                            store.AsSpan().CopyTo(newStore);
                             store = newStore;
                         }
 
-                        buffer.CopyTo(store[payloadSize..]);
+                        buffer
+#if NETSTANDARD2_0
+                            .Array.AsSpan(0, receiveResult.Count)
+#else
+                            .Span.Slice(0, receiveResult.Count)
+#endif
+                            .CopyTo(store.AsSpan(payloadSize));
 
                         payloadSize += receiveResult.Count;
                     } while (!receiveResult.EndOfMessage);
@@ -141,19 +145,12 @@ namespace TwitchLib.EventSub.Websockets.Client
                     switch (receiveResult.MessageType)
                     {
                         case WebSocketMessageType.Text:
-                        {
-                            var intermediate = MemoryPool<char>.Shared.Rent(payloadSize).Memory;
-
                             if (payloadSize == 0)
                                 continue;
 
-                            decoder.Convert(store.Span[..payloadSize], intermediate.Span, true, out _, out var charsCount, out _);
-                            var message = intermediate[..charsCount];
-
-                            OnDataReceived?.Invoke(this, new DataReceivedArgs { Message = message.Span.ToString() });
+                            OnDataReceived?.Invoke(this, new DataReceivedArgs { Bytes = store.AsSpan(0, payloadSize).ToArray() });
                             payloadSize = 0;
                             break;
-                        }
                         case WebSocketMessageType.Binary:
                             break;
                         case WebSocketMessageType.Close:
@@ -170,75 +167,6 @@ namespace TwitchLib.EventSub.Websockets.Client
                 }
             }
         }
-#else
-        /// <summary>
-        /// Background operation to process incoming data via the websocket
-        /// </summary>
-        /// <returns>Task representing the background operation</returns>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        private async Task ProcessDataAsync()
-        {
-            const int minimumBufferSize = 8192;
-
-            var buffer = new ArraySegment<byte>(new byte[minimumBufferSize]);
-            var payloadSize = 0;
-            
-            while (IsConnected)
-            {
-                try
-                {
-                    WebSocketReceiveResult receiveResult;
-                    var memory = new MemoryStream();
-
-                    do
-                    {
-                        receiveResult = await _webSocket.ReceiveAsync(buffer, CancellationToken.None);
-
-                        if (buffer.Array == null)
-                            continue;
-
-#pragma warning disable CA1849
-                        memory.Write(buffer.Array, buffer.Offset, receiveResult.Count);
-#pragma warning restore CA1849
-                        payloadSize += receiveResult.Count;
-                    } while (!receiveResult.EndOfMessage);
-
-                    switch (receiveResult.MessageType)
-                    {
-                        case WebSocketMessageType.Text:
-                        {
-                            if (payloadSize == 0)
-                                continue;
-
-                            memory.Seek(0, SeekOrigin.Begin);
-
-                            var reader = new StreamReader(memory, Encoding.UTF8);
-
-                            OnDataReceived?.Invoke(this, new DataReceivedArgs { Message = await reader.ReadToEndAsync() });
-
-                            memory.Dispose();
-                            reader.Dispose();
-                            break;
-                        }
-                        case WebSocketMessageType.Binary:
-                            break;
-                        case WebSocketMessageType.Close:
-                            if (_webSocket.CloseStatus != null)
-                                _logger?.LogWebsocketClosed((WebSocketCloseStatus)_webSocket.CloseStatus!, _webSocket.CloseStatusDescription!);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-
-                catch (Exception ex)
-                {
-                    OnErrorOccurred?.Invoke(this, new ErrorOccuredArgs { Exception = ex });
-                    break;
-                }
-            }
-        }
-#endif
 
         /// <summary>
         /// Cleanup of any unused resources as per IDisposable guidelines
