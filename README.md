@@ -45,6 +45,8 @@ Step 4: Create the HostedService we just added to the DI container and connect t
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using TwitchLib.Api;
+using TwitchLib.Api.Core.Enums;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 
@@ -54,7 +56,9 @@ namespace TwitchLib.EventSub.Websockets.Test
     {
         private readonly ILogger<WebsocketHostedService> _logger;
         private readonly EventSubWebsocketClient _eventSubWebsocketClient;
-
+        private readonly TwitchApi _twitchApi = new();
+        private string _userId;
+        
         public WebsocketHostedService(ILogger<WebsocketHostedService> logger, EventSubWebsocketClient eventSubWebsocketClient)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -65,7 +69,17 @@ namespace TwitchLib.EventSub.Websockets.Test
             _eventSubWebsocketClient.WebsocketReconnected += OnWebsocketReconnected;
             _eventSubWebsocketClient.ErrorOccurred += OnErrorOccurred;
 
-            _eventSubWebsocketClient.ChannelFollow += OnChannelFollow;
+            _eventSubWebsocketClient.ChannelFollow += OnChannelFollow; 
+            // Get ClientId and ClientSecret by register an Application here: https://dev.twitch.tv/console/apps
+            // https://dev.twitch.tv/docs/authentication/register-app/
+            _twitchApi.Settings.ClientId = "YOUR_APP_CLIENT_ID";
+            // Get Application Token with Client credentials grant flow.
+            // https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#client-credentials-grant-flow
+            _twitchApi.Settings.AccessToken = "YOUR_APPLICATION_ACCESS_TOKEN";
+
+            // You need the UserID for the User/Channel you want to get Events from.
+            // You can use await _api.Helix.Users.GetUsersAsync() for that.
+            _userId = "USER_ID";
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -85,6 +99,14 @@ namespace TwitchLib.EventSub.Websockets.Test
             if (!e.IsRequestedReconnect)
             {
                 // subscribe to topics
+                // create condition Dictionary
+                // You need BOTH broadcaster and moderator values or EventSub returns an Error!
+                var condition = new Dictionary<string, string> { { "broadcaster_user_id", _userId }, {"moderator_user_id", _userId} };
+                // Create and send EventSubscription
+                await _twitchApi.Helix.EventSub.CreateEventSubSubscriptionAsync("channel.follow", "2", condition, EventSubTransportMethod.Websocket,
+                _eventSubWebsocketClient.SessionId, accessToken: "BROADCASTER_ACCESS_TOKEN_WITH_SCOPES");
+                // If you want to get Events for special Events you need to additionally add the AccessToken of the ChannelOwner to the request.
+                // https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/
             }
         }
 

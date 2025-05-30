@@ -12,6 +12,8 @@ namespace TwitchLib.EventSub.Websockets.Example.NetStandard
     {
         private readonly ILogger<WebsocketHostedService> _logger;
         private readonly EventSubWebsocketClient _eventSubWebsocketClient;
+        private readonly TwitchApi _twitchApi = new();
+        private string _userId;
         
         public WebsocketHostedServiceWithoutDI(ILogger<WebsocketHostedService> logger, ILoggerFactory loggerFactory)
         {
@@ -54,6 +56,16 @@ namespace TwitchLib.EventSub.Websockets.Example.NetStandard
             if (!e.IsRequestedReconnect)
             {
                 // subscribe to topics
+                // Get ClientId and ClientSecret by register an Application here: https://dev.twitch.tv/console/apps
+                // https://dev.twitch.tv/docs/authentication/register-app/
+                _twitchApi.Settings.ClientId = "YOUR_APP_CLIENT_ID";
+                // Get Application Token with Client credentials grant flow.
+                // https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#client-credentials-grant-flow
+                _twitchApi.Settings.AccessToken = "YOUR_APPLICATION_ACCESS_TOKEN";
+
+                // You need the UserID for the User/Channel you want to get Events from.
+                // You can use await _api.Helix.Users.GetUsersAsync() for that.
+                _userId = "USER_ID";
             }
         }
 
