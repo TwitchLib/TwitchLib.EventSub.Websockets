@@ -15,7 +15,7 @@ namespace TwitchLib.EventSub.Websockets.Example
     {
         private readonly ILogger<WebsocketHostedService> _logger;
         private readonly EventSubWebsocketClient _eventSubWebsocketClient;
-        private readonly TwitchApi _twitchApi = new();
+        private readonly TwitchAPI _twitchApi = new();
         private string _userId;
 
         public WebsocketHostedService(ILogger<WebsocketHostedService> logger, EventSubWebsocketClient eventSubWebsocketClient)
