@@ -22,6 +22,6 @@ jobs:
    - name: Build TwitchLib.EventSub.Websockets
      run: dotnet build -c Release --no-restore
    - name: Pack TwitchLib.EventSub.Websockets
-     run: dotnet pack ./TwitchLib.EventSub.Websockets/TwitchLib.EventSub.Websockets.csproj -v normal -c Release -o nugets --no-build --version-suffix "preview-${{ github.run_number }}.${{ steps.short-sha.outputs.sha }}"
+     run: dotnet pack ./TwitchLib.EventSub.Websockets/TwitchLib.EventSub.Websockets.csproj -v normal -c Release -o nugets --no-build --version-suffix "preview.${{ github.run_number }}.${{ steps.short-sha.outputs.sha }}"
    - name: Push to Nuget
      run: dotnet nuget push "./nugets/*.nupkg" -k ${{ secrets.API_NUGET_TOKEN }} -s https://api.nuget.org/v3/index.json
