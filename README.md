@@ -17,10 +17,10 @@ You can also find a console app example for .NET 8 and for .NET Framework 4.8 in
 
 | NuGet            |       | [![TwitchLib.EventSub.Websockets][1]][2]                                       |
 | :--------------- | ----: | :--------------------------------------------------------------------------- |
-| Package Manager  | `PM>` | `Install-Package TwitchLib.EventSub.Websockets -Version 0.5.0`                 |
-| .NET CLI         | `>`   | `dotnet add package TwitchLib.EventSub.Websockets --version 0.5.0`             |
-| PackageReference |       | `<PackageReference Include="TwitchLib.EventSub.Websockets" Version="0.5.0" />` |
-| Paket CLI        | `>`   | `paket add TwitchLib.EventSub.Websockets --version 0.5.0`                      |
+| Package Manager  | `PM>` | `Install-Package TwitchLib.EventSub.Websockets -Version 0.6.0`                 |
+| .NET CLI         | `>`   | `dotnet add package TwitchLib.EventSub.Websockets --version 0.6.0`             |
+| PackageReference |       | `<PackageReference Include="TwitchLib.EventSub.Websockets" Version="0.6.0" />` |
+| Paket CLI        | `>`   | `paket add TwitchLib.EventSub.Websockets --version 0.6.0`                      |
 
 [1]: https://img.shields.io/nuget/v/TwitchLib.EventSub.Websockets.svg?label=TwitchLib.EventSub.Websockets
 [2]: https://www.nuget.org/packages/TwitchLib.EventSub.Websockets

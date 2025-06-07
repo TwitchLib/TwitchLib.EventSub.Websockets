@@ -33,5 +33,5 @@ namespace TwitchLib.EventSub.Websockets.Handler.User
                 client.RaiseEvent("ErrorOccurred", new ErrorOccuredArgs { Exception = ex, Message = $"Error encountered while trying to handle {SubscriptionType} notification! Raw Json: {jsonString}" });
             }
         }
-    }
+    } 
 }

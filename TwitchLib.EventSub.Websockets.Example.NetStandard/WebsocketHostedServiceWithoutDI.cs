@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using TwitchLib.Api;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 
@@ -12,7 +13,7 @@ namespace TwitchLib.EventSub.Websockets.Example.NetStandard
     {
         private readonly ILogger<WebsocketHostedService> _logger;
         private readonly EventSubWebsocketClient _eventSubWebsocketClient;
-        private readonly TwitchApi _twitchApi = new();
+        private readonly TwitchAPI _twitchApi = new();
         private string _userId;
         
         public WebsocketHostedServiceWithoutDI(ILogger<WebsocketHostedService> logger, ILoggerFactory loggerFactory)

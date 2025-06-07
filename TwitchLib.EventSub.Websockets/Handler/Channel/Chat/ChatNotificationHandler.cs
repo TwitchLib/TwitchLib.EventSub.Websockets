@@ -6,25 +6,25 @@ using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 using TwitchLib.EventSub.Websockets.Core.Handler;
 using TwitchLib.EventSub.Websockets.Core.Models;
 
-namespace TwitchLib.EventSub.Websockets.Handler.Channel
+namespace TwitchLib.EventSub.Websockets.Handler.Channel.Chat
 {
     /// <summary>
-    /// Handler for 'channel.chat.nessage' notifications
+    /// Handler for 'channel.chat.notification' notifications
     /// </summary>
-    public class ChatMessageHandler : INotificationHandler
+    public class ChatNotificationHandler : INotificationHandler
     {
         /// <inheritdoc />
-        public string SubscriptionType => "channel.chat.message";
+        public string SubscriptionType => "channel.chat.notification";
 
         /// <inheritdoc />
         public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
         {
             try
             {
-                var data = JsonSerializer.Deserialize<EventSubNotification<ChannelChatMessage>>(jsonString.AsSpan(), serializerOptions);
+                var data = JsonSerializer.Deserialize<EventSubNotification<ChannelChatNotification>>(jsonString.AsSpan(), serializerOptions);
                 if (data is null)
                     throw new InvalidOperationException("Parsed JSON cannot be null!");
-                client.RaiseEvent("ChannelChatMessage", new ChannelChatMessageArgs { Notification = data });
+                client.RaiseEvent("ChannelChatNotification", new ChannelChatNotificationArgs { Notification = data });
             }
             catch (Exception ex)
             {

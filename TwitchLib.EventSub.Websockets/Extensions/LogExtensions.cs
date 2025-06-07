@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.WebSockets;
+using System.Text;
 using Microsoft.Extensions.Logging;
 using TwitchLib.EventSub.Websockets.Client;
 
@@ -7,9 +8,14 @@ namespace TwitchLib.EventSub.Websockets.Extensions
 {
     internal static partial class LogExtensions
     {
-        [LoggerMessage(LogLevel.Debug, "{message}")]
+        const LogLevel LogMessageLogLevel = LogLevel.Debug;
+
+        [LoggerMessage(LogLevel.Error, "Exeption was throw when raising '{eventName}' event.")]
+        public static partial void LogRaiseEventExeption(this ILogger<EventSubWebsocketClient> logger, string eventName, Exception ex);
+
+        [LoggerMessage(LogMessageLogLevel, "{message}")]
         public static partial void LogMessage(this ILogger<EventSubWebsocketClient> logger, string message);
-        
+
         [LoggerMessage(LogLevel.Critical, "Websocket {sessionId} disconnected at {disconnectedAt}. Reason: {disconnectReason}")]
         public static partial void LogForceDisconnected(this ILogger<EventSubWebsocketClient> logger, string sessionId, DateTime? disconnectedAt, string disconnectReason);
         
@@ -24,5 +30,13 @@ namespace TwitchLib.EventSub.Websockets.Extensions
         
         [LoggerMessage(LogLevel.Critical, "{closeStatus} - {closeStatusDescription}")]
         public static partial void LogWebsocketClosed(this ILogger<WebsocketClient> logger, WebSocketCloseStatus closeStatus, string closeStatusDescription);
+
+        public static void LogMessage(this ILogger<EventSubWebsocketClient> logger, byte[] message)
+        {
+            if (logger.IsEnabled(LogMessageLogLevel))
+            {
+                __LogMessageCallback(logger, Encoding.UTF8.GetString(message), null);
+            }
+        }
     }
 }
