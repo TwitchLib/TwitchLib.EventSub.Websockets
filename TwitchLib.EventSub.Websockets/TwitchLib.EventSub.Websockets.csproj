@@ -1,23 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0</TargetFrameworks>
 	<PackageId>TwitchLib.EventSub.Websockets</PackageId>
     <Title>TwitchLib.EventSub.Websockets</Title>
 	<Authors>swiftyspiffy, Prom3theu5, Syzuna, LuckyNoS7evin</Authors>
-	<VersionPrefix>0.6.0</VersionPrefix>
+	<VersionPrefix>0.7.0</VersionPrefix>
 	<VersionSuffix>$(VersionSuffix)</VersionSuffix>
-	<AssemblyVersion>0.6.0</AssemblyVersion>
-	<FileVersion>0.6.0</FileVersion>
+	  <AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
+	<FileVersion>$(VersionPrefix)</FileVersion>
 	<Description>EventSub Websockets (also known as EventSockets) Client Library</Description>
 	<PackageIconUrl>https://cdn.syzuna-programs.de/images/twitchlib.png</PackageIconUrl>
 	<PackageProjectUrl>https://github.com/TwitchLib/TwitchLib.EventSub.Websockets</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/TwitchLib/TwitchLib.EventSub.Websockets</RepositoryUrl>
 	<RepositoryType>Git</RepositoryType>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<Copyright>Copyright 2023</Copyright>
+	<Copyright>Copyright 2025</Copyright>
 	<PackageTags>twitch library events eventsub websockets eventsockets c# csharp netstandard2.0 netstandard2.1 net6.0 net7.0 net8.0</PackageTags>
-	<PackageReleaseNotes>Updated dependencies, enabled nullable, added new events (ChannelChatClear, ChannelChatClearUserMessages, ChannelChatMessageDelete, ChannelChatNotification, ChannelVipAdd, ChannelVipRemove, ChannelPointsAutomaticRewardRedemptionAdd, ChannelSuspiciousUserMessage, ChannelSuspiciousUserUpdate, ChannelWarningAcknowledge, ChannelWarningSend, UserWhisperMessage, ChannelSharedChatSessionBegin, ChannelSharedChatSessionUpdate, ChannelSharedChatSessionEnd, ChannelUnbanRequestCreate, ChannelUnbanRequestResolve)</PackageReleaseNotes>
+	<PackageReleaseNotes></PackageReleaseNotes>
 	<NeutralLanguage>en-US</NeutralLanguage>
 	<ImplicitUsings>disable</ImplicitUsings>
 	<Nullable>enable</Nullable>
