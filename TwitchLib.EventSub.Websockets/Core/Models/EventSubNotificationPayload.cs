@@ -2,7 +2,7 @@
 {
     public class EventSubNotificationPayload<T>
     {
-        public EventSubTransport Transport { get; set; }
+        public EventSubSubscription Subscription{ get; set; }
 
         /// <summary>
         /// The event’s data.
