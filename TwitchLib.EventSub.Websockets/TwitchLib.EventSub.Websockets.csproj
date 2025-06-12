@@ -16,7 +16,7 @@
 	<RepositoryType>Git</RepositoryType>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<Copyright>Copyright 2025</Copyright>
-	<PackageTags>twitch library events eventsub websockets eventsockets c# csharp netstandard2.0 netstandard2.1 net6.0 net7.0 net8.0</PackageTags>
+	<PackageTags>twitch library events eventsub websockets eventsockets c# csharp netstandard2.0 netstandard2.1 net8.0</PackageTags>
 	<PackageReleaseNotes></PackageReleaseNotes>
 	<NeutralLanguage>en-US</NeutralLanguage>
 	<ImplicitUsings>disable</ImplicitUsings>
