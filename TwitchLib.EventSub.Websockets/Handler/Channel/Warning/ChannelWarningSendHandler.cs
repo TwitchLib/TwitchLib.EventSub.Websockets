@@ -17,6 +17,9 @@ namespace TwitchLib.EventSub.Websockets.Handler.Channel.Warning
         public string SubscriptionType => "channel.warning.send";
 
         /// <inheritdoc />
+        public string SubscriptionVersion => "1";
+
+        /// <inheritdoc />
         public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
         {
             try

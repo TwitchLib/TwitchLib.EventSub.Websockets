@@ -15,7 +15,10 @@ namespace TwitchLib.EventSub.Websockets.Handler.Channel.ShieldMode
     {
         /// <inheritdoc />
         public string SubscriptionType => "channel.shield_mode.begin";
-        
+
+        /// <inheritdoc />
+        public string SubscriptionVersion => "1";
+
         /// <inheritdoc />
         public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
         {

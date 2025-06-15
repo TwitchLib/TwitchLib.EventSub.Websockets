@@ -15,7 +15,10 @@ namespace TwitchLib.EventSub.Websockets.Handler.Channel.SharedChat
     {
         /// <inheritdoc />
         public string SubscriptionType => "channel.shared_chat.update";
-        
+
+        /// <inheritdoc />
+        public string SubscriptionVersion => "1";
+
         /// <inheritdoc />
         public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
         {

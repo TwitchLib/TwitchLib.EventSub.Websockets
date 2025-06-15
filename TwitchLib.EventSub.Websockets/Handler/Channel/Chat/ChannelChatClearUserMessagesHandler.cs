@@ -17,6 +17,9 @@ public class ChannelChatClearUserMessagesHandler : INotificationHandler
     public string SubscriptionType => "channel.chat.clear_user_messages";
 
     /// <inheritdoc />
+    public string SubscriptionVersion => "1";
+
+    /// <inheritdoc />
     public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
     {
         try

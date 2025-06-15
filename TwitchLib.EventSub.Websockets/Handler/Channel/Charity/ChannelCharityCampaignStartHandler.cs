@@ -17,6 +17,9 @@ namespace TwitchLib.EventSub.Websockets.Handler.Channel.Charity
         public string SubscriptionType => "channel.charity_campaign.start";
 
         /// <inheritdoc />
+        public string SubscriptionVersion => "1";
+
+        /// <inheritdoc />
         public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
         {
             try

@@ -17,6 +17,9 @@ public class UserWhisperMessageHandler : INotificationHandler
     public string SubscriptionType => "user.whisper.message";
 
     /// <inheritdoc />
+    public string SubscriptionVersion => "1";
+
+    /// <inheritdoc />
     public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
     {
         try

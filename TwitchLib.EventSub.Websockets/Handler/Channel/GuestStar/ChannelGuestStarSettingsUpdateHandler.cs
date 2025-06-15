@@ -15,7 +15,10 @@ namespace TwitchLib.EventSub.Websockets.Handler.Channel.GuestStar
     {
         /// <inheritdoc />
         public string SubscriptionType => "channel.guest_star_settings.update";
-        
+
+        /// <inheritdoc />
+        public string SubscriptionVersion => "beta";
+
         /// <inheritdoc />
         public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
         {

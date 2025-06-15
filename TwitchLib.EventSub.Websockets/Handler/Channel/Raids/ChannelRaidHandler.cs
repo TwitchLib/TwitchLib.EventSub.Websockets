@@ -17,6 +17,9 @@ namespace TwitchLib.EventSub.Websockets.Handler.Channel.Raids
         public string SubscriptionType => "channel.raid";
 
         /// <inheritdoc />
+        public string SubscriptionVersion => "1";
+
+        /// <inheritdoc />
         public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
         {
             try
