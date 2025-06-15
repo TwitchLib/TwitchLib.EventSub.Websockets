@@ -14,6 +14,9 @@ namespace TwitchLib.EventSub.Websockets.Handler
         /// <inheritdoc />
         public string SubscriptionType => "revocation";
 
+        /// <inheritdoc/>
+        public string SubscriptionVersion => string.Empty;
+
         /// <inheritdoc />
         public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
         {

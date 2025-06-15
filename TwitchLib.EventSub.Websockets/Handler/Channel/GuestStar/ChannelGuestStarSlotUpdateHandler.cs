@@ -15,7 +15,10 @@ namespace TwitchLib.EventSub.Websockets.Handler.Channel.GuestStar
     {
         /// <inheritdoc />
         public string SubscriptionType => "channel.guest_star_slot.update";
-        
+
+        /// <inheritdoc />
+        public string SubscriptionVersion => "TODO: delete me";
+
         /// <inheritdoc />
         public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
         {

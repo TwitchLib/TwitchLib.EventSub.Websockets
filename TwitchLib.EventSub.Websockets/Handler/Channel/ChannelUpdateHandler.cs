@@ -17,6 +17,9 @@ namespace TwitchLib.EventSub.Websockets.Handler.Channel
         public string SubscriptionType => "channel.update";
 
         /// <inheritdoc />
+        public string SubscriptionVersion => "2";
+
+        /// <inheritdoc />
         public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
         {
             try

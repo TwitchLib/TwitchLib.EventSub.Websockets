@@ -15,7 +15,10 @@ namespace TwitchLib.EventSub.Websockets.Handler.Channel.Shoutouts
     {
         /// <inheritdoc />
         public string SubscriptionType => "channel.shoutout.receive";
-        
+
+        /// <inheritdoc />
+        public string SubscriptionVersion => "1";
+
         public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
         {
             try

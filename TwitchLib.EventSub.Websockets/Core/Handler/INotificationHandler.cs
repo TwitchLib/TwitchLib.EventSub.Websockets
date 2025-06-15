@@ -13,6 +13,11 @@ namespace TwitchLib.EventSub.Websockets.Core.Handler
         string SubscriptionType { get; }
 
         /// <summary>
+        /// Version of subscription the handler handles
+        /// </summary>
+        string SubscriptionVersion { get; }
+
+        /// <summary>
         /// Handles incoming notifications that the Handler is designed to handle as described by the SubscriptionType property of the Handler
         /// </summary>
         /// <param name="client">EventSubWebsocketClient that received the notification</param>
