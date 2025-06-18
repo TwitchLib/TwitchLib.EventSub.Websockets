@@ -19,6 +19,9 @@ namespace TwitchLib.EventSub.Websockets.Handler.Channel.SuspiciousUser
         public string SubscriptionType => "channel.suspicious_user.update";
 
         /// <inheritdoc />
+        public string SubscriptionVersion => "1";
+
+        /// <inheritdoc />
         public void Handle(EventSubWebsocketClient client, string jsonString, JsonSerializerOptions serializerOptions)
         {
             try

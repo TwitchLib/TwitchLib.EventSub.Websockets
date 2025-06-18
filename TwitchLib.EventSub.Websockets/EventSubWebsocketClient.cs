@@ -356,7 +356,7 @@ namespace TwitchLib.EventSub.Websockets
 
         private WebsocketClient _websocketClient;
 
-        private readonly Dictionary<string, Action<EventSubWebsocketClient, string, JsonSerializerOptions>> _handlers = new();
+        private readonly Dictionary<(string Type, string Version), Action<EventSubWebsocketClient, string, JsonSerializerOptions>> _handlers = new();
         private readonly ILogger<EventSubWebsocketClient> _logger;
         private readonly ILoggerFactory? _loggerFactory;
         private readonly IServiceProvider? _serviceProvider;
@@ -549,10 +549,10 @@ namespace TwitchLib.EventSub.Websockets
             foreach (var handler in handlers)
             {
 #if NET6_0_OR_GREATER
-                _handlers.TryAdd(handler.SubscriptionType, handler.Handle);
+                _handlers.TryAdd((handler.SubscriptionType, handler.SubscriptionVersion), handler.Handle);
 #else
-                if (!_handlers.ContainsKey(handler.SubscriptionType))
-                    _handlers.Add(handler.SubscriptionType, handler.Handle);
+                if (!_handlers.ContainsKey((handler.SubscriptionType, handler.SubscriptionVersion)))
+                    _handlers.Add((handler.SubscriptionType, handler.SubscriptionVersion), handler.Handle);
 #endif
             }
         }
@@ -608,13 +608,14 @@ namespace TwitchLib.EventSub.Websockets
                     break;
                 case "notification":
                     var subscriptionType = metadata.GetProperty("subscription_type"u8).GetString();
-                    if (string.IsNullOrWhiteSpace(subscriptionType))
+                    var subscriptionVersion = metadata.GetProperty("subscription_version"u8).GetString();
+                    if (string.IsNullOrWhiteSpace(subscriptionType) || string.IsNullOrWhiteSpace(subscriptionVersion))
                     {
-                        await ErrorOccurred.InvokeAsync(this, new ErrorOccuredArgs { Exception = new ArgumentNullException(nameof(subscriptionType)), Message = "Unable to determine subscription type!" });
+                        await ErrorOccurred.InvokeAsync(this, new ErrorOccuredArgs { Exception = new ArgumentException("Unable to determine subscription type or subscription version!") });
                         break;
                     }
                     var message1 = Encoding.UTF8.GetString(e.Bytes);
-                    HandleNotification(message1, subscriptionType!);
+                    HandleNotification(message1, subscriptionType!, subscriptionVersion);
                     break;
                 case "revocation":
                     var message2 = Encoding.UTF8.GetString(e.Bytes);
@@ -699,9 +700,10 @@ namespace TwitchLib.EventSub.Websockets
         /// </summary>
         /// <param name="message">notification message received from Twitch EventSub</param>
         /// <param name="subscriptionType">subscription type received from Twitch EventSub</param>
-        private void HandleNotification(string message, string subscriptionType)
+        /// <param name="subscriptionVersion">subscription type received from Twitch EventSub</param>
+        private void HandleNotification(string message, string subscriptionType, string subscriptionVersion)
         {
-            if (_handlers.TryGetValue(subscriptionType, out var handler))
+            if (_handlers.TryGetValue((subscriptionType, subscriptionVersion), out var handler))
                 handler(this, message, _jsonSerializerOptions);
         }
 
@@ -711,7 +713,7 @@ namespace TwitchLib.EventSub.Websockets
         /// <param name="message">notification message received from Twitch EventSub</param>
         private void HandleRevocation(string message)
         {
-            if (_handlers.TryGetValue("revocation", out var handler))
+            if (_handlers.TryGetValue(("revocation", string.Empty), out var handler))
                 handler(this, message, _jsonSerializerOptions);
         }
 
