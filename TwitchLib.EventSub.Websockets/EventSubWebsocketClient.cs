@@ -14,7 +14,9 @@ using TwitchLib.EventSub.Core.Extensions;
 using TwitchLib.EventSub.Core.SubscriptionTypes.Channel;
 using TwitchLib.EventSub.Websockets.Client;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
+using TwitchLib.EventSub.Websockets.Core.EventArgs.Automod;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
+using TwitchLib.EventSub.Websockets.Core.EventArgs.Conduit;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Stream;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.User;
 using TwitchLib.EventSub.Websockets.Core.Handler;
@@ -46,6 +48,31 @@ namespace TwitchLib.EventSub.Websockets
         /// Event that triggers when the websocket was successfully reconnected
         /// </summary>
         public event AsyncEventHandler? WebsocketReconnected;
+
+        /// <summary>
+        /// Event that triggers on "automod.message.hold" notifications
+        /// </summary>
+        public event AsyncEventHandler<AutomodMessageHoldArgs>? AutomodMessageHold;
+        /// <summary>
+        /// Event that triggers on "automod.message.hold" notifications
+        /// </summary>
+        public event AsyncEventHandler<AutomodMessageHoldV2Args>? AutomodMessageHoldV2;
+        /// <summary>
+        /// Event that triggers on "automod.message.update" notifications
+        /// </summary>
+        public event AsyncEventHandler<AutomodMessageUpdateArgs>? AutomodMessageUpdate;
+        /// <summary>
+        /// Event that triggers on "automod.message.update" notifications
+        /// </summary>
+        public event AsyncEventHandler<AutomodMessageUpdateV2Args>? AutomodMessageUpdateV2;
+        /// <summary>
+        /// Event that triggers on "automod.settings.update" notifications
+        /// </summary>
+        public event AsyncEventHandler<AutomodMessageUpdateV2Args>? AutomodSettingsUpdate;
+        /// <summary>
+        /// Event that triggers on "automod.terms.update" notifications
+        /// </summary>
+        public event AsyncEventHandler<AutomodTermsUpdateArgs>? AutomodTermsUpdate;
 
         /// <summary>
         /// Event that triggers on "channel.ad_break.begin" notifications
@@ -102,6 +129,11 @@ namespace TwitchLib.EventSub.Websockets
         /// Event that triggers on "channel.follow" notifications
         /// </summary>
         public event AsyncEventHandler<ChannelFollowArgs>? ChannelFollow;
+
+        /// <summary>
+        /// Event that triggers on "conduit.shard.disabled" notifications
+        /// </summary>
+        public event AsyncEventHandler<ConduitShardDisabledArgs>? ConduitShardDisabled;
 
         /// <summary>
         /// Event that triggers on "channel.goal.begin" notifications
