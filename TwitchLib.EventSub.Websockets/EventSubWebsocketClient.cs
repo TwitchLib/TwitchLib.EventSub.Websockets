@@ -50,6 +50,10 @@ namespace TwitchLib.EventSub.Websockets
         public event AsyncEventHandler? WebsocketReconnected;
 
         /// <summary>
+        /// Event that triggers when EventSub send event, that's unknown. (ie.: not implementet ... yet!)
+        /// </summary>
+        public event AsyncEventHandler<UnknownEventSubEventArgs>? UnknownEventSubEvent;
+        /// <summary>
         /// Event that triggers on "automod.message.hold" notifications
         /// </summary>
         public event AsyncEventHandler<AutomodMessageHoldArgs>? AutomodMessageHold;
@@ -750,7 +754,7 @@ namespace TwitchLib.EventSub.Websockets
         /// <param name="subscriptionVersion">subscription type received from Twitch EventSub</param>
         private void HandleNotification(string message, string subscriptionType, string subscriptionVersion)
         {
-            if (_handlers.TryGetValue((subscriptionType, subscriptionVersion), out var handler))
+            if (_handlers.TryGetValue((subscriptionType, subscriptionVersion), out var handler) || _handlers.TryGetValue((string.Empty, string.Empty), out handler))
                 handler(this, message, _jsonSerializerOptions);
         }
 
