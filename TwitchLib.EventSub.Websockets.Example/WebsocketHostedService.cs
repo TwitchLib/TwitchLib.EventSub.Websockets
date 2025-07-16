@@ -28,7 +28,7 @@ namespace TwitchLib.EventSub.Websockets.Example
             _eventSubWebsocketClient.WebsocketReconnected += OnWebsocketReconnected;
             _eventSubWebsocketClient.ErrorOccurred += OnErrorOccurred;
 
-            _eventSubWebsocketClient.UnknownEventSubEvent += OnUnknownEventSubEvent;
+            _eventSubWebsocketClient.UnknownEventSubNotification += OnUnknownEventSubNotification;
             _eventSubWebsocketClient.ChannelFollow += OnChannelFollow;
             
             // Get ClientId and ClientSecret by register an Application here: https://dev.twitch.tv/console/apps
@@ -99,8 +99,8 @@ namespace TwitchLib.EventSub.Websockets.Example
             _logger.LogWarning($"Websocket {_eventSubWebsocketClient.SessionId} reconnected");
         }
 
-        // Handling events that are not (yet) implemented
-        private async Task OnUnknownEventSubEvent(object sender, UnknownEventSubEventArgs e)
+        // Handling notifications that are not (yet) implemented
+        private async Task OnUnknownEventSubNotification(object sender, UnknownEventSubNotificationArgs e)
         {
             var metadata = e.Notification.Metadata;
             _logger.LogInformation("Received event that has not yet been implemented: type:{type}, version:{version}", metadata.SubscriptionType, metadata.SubscriptionVersion);

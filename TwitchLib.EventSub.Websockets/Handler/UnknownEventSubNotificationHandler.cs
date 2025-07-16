@@ -4,7 +4,7 @@ using TwitchLib.EventSub.Websockets.Core.Models;
 
 namespace TwitchLib.EventSub.Websockets.Handler;
 
-class UnknownEventSubEventHandler : NotificationHandler<UnknownEventSubEventArgs, EventSubNotification<JsonElement>>
+class UnknownEventSubNotificationHandler : NotificationHandler<UnknownEventSubNotificationArgs, EventSubNotification<JsonElement>>
 {
     /// <inheritdoc />
     public override string SubscriptionType => string.Empty;
@@ -13,5 +13,5 @@ class UnknownEventSubEventHandler : NotificationHandler<UnknownEventSubEventArgs
     public override string SubscriptionVersion => string.Empty;
 
     /// <inheritdoc />
-    public override string EventName => nameof(EventSubWebsocketClient.UnknownEventSubEvent);
+    public override string EventName => nameof(EventSubWebsocketClient.UnknownEventSubNotification);
 }

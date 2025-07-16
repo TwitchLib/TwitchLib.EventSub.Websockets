@@ -50,9 +50,9 @@ namespace TwitchLib.EventSub.Websockets
         public event AsyncEventHandler? WebsocketReconnected;
 
         /// <summary>
-        /// Event that triggers when EventSub send event, that's unknown. (ie.: not implementet ... yet!)
+        /// Event that triggers when EventSub send notification, that's unknown. (ie.: not implementet ... yet!)
         /// </summary>
-        public event AsyncEventHandler<UnknownEventSubEventArgs>? UnknownEventSubEvent;
+        public event AsyncEventHandler<UnknownEventSubNotificationArgs>? UnknownEventSubNotification;
         /// <summary>
         /// Event that triggers on "automod.message.hold" notifications
         /// </summary>
