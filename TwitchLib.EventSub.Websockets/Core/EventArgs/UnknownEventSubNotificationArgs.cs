@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using TwitchLib.EventSub.Websockets.Core.Models;
+using TwitchLib.EventSub.Core.EventArgs;
 
 namespace TwitchLib.EventSub.Websockets.Core.EventArgs;
 
-public class UnknownEventSubNotificationArgs : TwitchLibEventSubEventArgs<EventSubNotification<JsonElement>>
+public class UnknownEventSubNotificationArgs : TwitchLibEventSubNotificationArgs<JsonElement>
 { }

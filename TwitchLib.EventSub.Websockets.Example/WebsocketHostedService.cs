@@ -6,8 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using TwitchLib.Api;
 using TwitchLib.Api.Core.Enums;
+using TwitchLib.EventSub.Core.EventArgs.Channel;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
+using TwitchLib.EventSub.Websockets.Core.Models;
 
 namespace TwitchLib.EventSub.Websockets.Example
 {
@@ -30,7 +31,7 @@ namespace TwitchLib.EventSub.Websockets.Example
 
             _eventSubWebsocketClient.UnknownEventSubNotification += OnUnknownEventSubNotification;
             _eventSubWebsocketClient.ChannelFollow += OnChannelFollow;
-            
+
             // Get ClientId and ClientSecret by register an Application here: https://dev.twitch.tv/console/apps
             // https://dev.twitch.tv/docs/authentication/register-app/
             _twitchApi.Settings.ClientId = "YOUR_APP_CLIENT_ID";
@@ -50,7 +51,7 @@ namespace TwitchLib.EventSub.Websockets.Example
 
         private async Task OnChannelFollow(object sender, ChannelFollowArgs e)
         {
-            var eventData = e.Notification.Payload.Event;
+            var eventData = e.Payload.Event;
             _logger.LogInformation($"{eventData.UserName} followed {eventData.BroadcasterUserName} at {eventData.FollowedAt}");
         }
 
@@ -102,7 +103,7 @@ namespace TwitchLib.EventSub.Websockets.Example
         // Handling notifications that are not (yet) implemented
         private async Task OnUnknownEventSubNotification(object sender, UnknownEventSubNotificationArgs e)
         {
-            var metadata = e.Notification.Metadata;
+            var metadata = (WebsocketEventSubMetadata)e.Metadata;
             _logger.LogInformation("Received event that has not yet been implemented: type:{type}, version:{version}", metadata.SubscriptionType, metadata.SubscriptionVersion);
         
             switch((metadata.SubscriptionType, metadata.SubscriptionVersion))

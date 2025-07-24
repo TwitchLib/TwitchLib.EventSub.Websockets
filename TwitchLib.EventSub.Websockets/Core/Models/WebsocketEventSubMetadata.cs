@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using TwitchLib.EventSub.Core.Models;
 
 namespace TwitchLib.EventSub.Websockets.Core.Models;
 
-public class EventSubMetadata
+public class WebsocketEventSubMetadata : EventSubMetadata
 {
     /// <summary>
     /// An ID that uniquely identifies message. 
@@ -11,7 +13,7 @@ public class EventSubMetadata
 
     /// <summary>
     /// The type of notification.
-    /// </summary>
+    /// </summary>w
     public string MessageType { get; set; }
 
     /// <summary>
@@ -28,4 +30,9 @@ public class EventSubMetadata
     /// The subscription version.
     /// </summary>
     public string? SubscriptionVersion { get; set; }
+
+#if NET8_0_OR_GREATER
+    [MemberNotNullWhen(true, nameof(SubscriptionType), nameof(SubscriptionVersion))]
+#endif
+    public bool HasSubscriptionInfo => SubscriptionType is not null && SubscriptionVersion is not null;
 }

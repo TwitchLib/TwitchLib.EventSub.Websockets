@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TwitchLib.Api;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
+using TwitchLib.EventSub.Core.EventArgs.Channel;
 
 namespace TwitchLib.EventSub.Websockets.Example.NetStandard
 {
@@ -46,7 +46,7 @@ namespace TwitchLib.EventSub.Websockets.Example.NetStandard
 
         private async Task OnChannelFollow(object sender, ChannelFollowArgs e)
         {
-            var eventData = e.Notification.Payload.Event;
+            var eventData = e.Payload.Event;
             _logger.LogInformation($"{eventData.UserName} followed {eventData.BroadcasterUserName} at {eventData.FollowedAt}");
         }
         
