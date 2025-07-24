@@ -13,7 +13,7 @@ public class WebsocketEventSubMetadata : EventSubMetadata
 
     /// <summary>
     /// The type of notification.
-    /// </summary>w
+    /// </summary>
     public string MessageType { get; set; }
 
     /// <summary>
