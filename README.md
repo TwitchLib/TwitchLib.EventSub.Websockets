@@ -25,6 +25,17 @@ You can also find a console app example for .NET 8 and for .NET Framework 4.8 in
 [1]: https://img.shields.io/nuget/v/TwitchLib.EventSub.Websockets.svg?label=TwitchLib.EventSub.Websockets
 [2]: https://www.nuget.org/packages/TwitchLib.EventSub.Websockets
 
+## Breaking Changes in Version 0.7
+- removed INotificationHandler interface
+- Removed deprecated versions of .NET.
+- All EventSub events were moved to `TwitchLib.EventSub.Core` Nuget Package, for better management across future EventSub transport Client libraries.
+  That means their namespace changed from `TwitchLib.EventSub.Websockets.Core.EventArgs.*` to `TwitchLib.EventSub.Core.EventArgs.*`.
+- Like Events, all EventSub Models were moved to the `TwitchLib.EventSub.Core` package, (namespace changed from `TwitchLib.EventSub.Websockets.Core.Models` to `TwitchLib.EventSub.Core.Models`)
+  but to ensure that the models can be used across projects some changes had to be made:
+    - Properties from `EventSubNotification<T>` were moved to `TwitchLibEventSubEventArgs<T>`.
+    - Property `Notification` was removed from `TwitchLibEventSubEventArgs<T>`.
+    - Class `EventSubMetadata` was renamed to `WebsocketEventSubMetadata`.
+
 ## Setup
 
 Step 1: Create a new project (Console, WPF, ASP.NET)
