@@ -682,16 +682,16 @@ namespace TwitchLib.EventSub.Websockets
         private async ValueTask HandleWelcome(WebsocketEventSubMetadata metadata, JsonElement payload)
         {
             _ = metadata;
-            var welcomeMessage = JsonSerializer.Deserialize<EventSubWebsocketSessionInfoPayload>(payload, _jsonSerializerOptions);
+            var data = JsonSerializer.Deserialize<EventSubWebsocketSessionInfoPayload>(payload, _jsonSerializerOptions);
 
-            if (welcomeMessage is null)
+            if (data is null)
                 return;
 
             if (_reconnectRequested)
                 _reconnectComplete = true;
 
-            SessionId = welcomeMessage.Session.Id;
-            var keepAliveTimeout = welcomeMessage.Session.KeepaliveTimeoutSeconds + welcomeMessage.Session.KeepaliveTimeoutSeconds * 0.2;
+            SessionId = data.Session.Id;
+            var keepAliveTimeout = data.Session.KeepaliveTimeoutSeconds + data.Session.KeepaliveTimeoutSeconds * 0.2;
 
             _keepAliveTimeout = TimeSpan.FromSeconds(keepAliveTimeout ?? 10);
 
