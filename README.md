@@ -35,6 +35,7 @@ You can also find a console app example for .NET 8 and for .NET Framework 4.8 in
     - Properties from `EventSubNotification<T>` were moved to `TwitchLibEventSubEventArgs<T>`.
     - Property `Notification` was removed from `TwitchLibEventSubEventArgs<T>`.
     - Class `EventSubMetadata` was renamed to `WebsocketEventSubMetadata`.
+- `WebsocketDisconnected` and `WebsocketReconnected` now contain more specific EventArgs.
 
 ## Setup
 
@@ -121,7 +122,7 @@ namespace TwitchLib.EventSub.Websockets.Test
             }
         }
 
-        private async Task OnWebsocketDisconnected(object sender, EventArgs e)
+        private async Task OnWebsocketDisconnected(object sender, WebsocketDisconnectedArgs e)
         {
             _logger.LogError($"Websocket {_eventSubWebsocketClient.SessionId} disconnected!");
 
@@ -133,7 +134,7 @@ namespace TwitchLib.EventSub.Websockets.Test
             }
         }
 
-        private async Task OnWebsocketReconnected(object sender, EventArgs e)
+        private async Task OnWebsocketReconnected(object sender, WebsocketReconnectedArgs e)
         {
             _logger.LogWarning($"Websocket {_eventSubWebsocketClient.SessionId} reconnected");
         }

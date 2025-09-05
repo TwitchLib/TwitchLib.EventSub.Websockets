@@ -83,7 +83,7 @@ namespace TwitchLib.EventSub.Websockets.Example
             }
         }
 
-        private async Task OnWebsocketDisconnected(object sender, EventArgs e)
+        private async Task OnWebsocketDisconnected(object sender, WebsocketDisconnectedArgs e)
         {
             _logger.LogError($"Websocket {_eventSubWebsocketClient.SessionId} disconnected!");
 
@@ -95,7 +95,7 @@ namespace TwitchLib.EventSub.Websockets.Example
             }
         }
 
-        private async Task OnWebsocketReconnected(object sender, EventArgs e)
+        private async Task OnWebsocketReconnected(object sender, WebsocketReconnectedArgs e)
         {
             _logger.LogWarning($"Websocket {_eventSubWebsocketClient.SessionId} reconnected");
         }
