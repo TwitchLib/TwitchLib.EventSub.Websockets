@@ -40,7 +40,7 @@ namespace TwitchLib.EventSub.Websockets
         /// <summary>
         /// Event that triggers when the websocket disconnected
         /// </summary>
-        public event AsyncEventHandler? WebsocketDisconnected;
+        public event AsyncEventHandler<WebsocketDisconnectedArgs>? WebsocketDisconnected;
         /// <summary>
         /// Event that triggers when an error occurred on the websocket
         /// </summary>
@@ -48,7 +48,7 @@ namespace TwitchLib.EventSub.Websockets
         /// <summary>
         /// Event that triggers when the websocket was successfully reconnected
         /// </summary>
-        public event AsyncEventHandler? WebsocketReconnected;
+        public event AsyncEventHandler<WebsocketReconnectedArgs>? WebsocketReconnected;
         /// <summary>
         /// Event that triggers when the websocket received revocation event
         /// </summary>
@@ -551,7 +551,7 @@ namespace TwitchLib.EventSub.Websockets
                             await oldRunningClient.DisconnectAsync();
                         oldRunningClient.Dispose();
 
-                        await WebsocketReconnected.InvokeAsync(this, EventArgs.Empty);
+                        await WebsocketReconnected.InvokeAsync(this, new());
 
                         _reconnectRequested = false;
                         _reconnectComplete = false;
@@ -582,7 +582,7 @@ namespace TwitchLib.EventSub.Websockets
             if (!await ConnectAsync())
                 return false;
 
-            await WebsocketReconnected.InvokeAsync(this, EventArgs.Empty);
+            await WebsocketReconnected.InvokeAsync(this, new());
 
             return true;
         }
@@ -606,7 +606,7 @@ namespace TwitchLib.EventSub.Websockets
 
             await DisconnectAsync();
 
-            await WebsocketDisconnected.InvokeAsync(this, EventArgs.Empty);
+            await WebsocketDisconnected.InvokeAsync(this, new());
         }
 
         /// <summary>
@@ -712,7 +712,7 @@ namespace TwitchLib.EventSub.Websockets
             if (data != null)
                 _logger?.LogForceDisconnected(data.Session.Id, data.Session.DisconnectedAt, data.Session.DisconnectReason);
 
-            await WebsocketDisconnected.InvokeAsync(this, EventArgs.Empty);
+            await WebsocketDisconnected.InvokeAsync(this, new());
         }
 
         /// <summary>
