@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="TwitchLib.EventSub.Websockets.Example.NetStandard/TwitchLib.EventSub.Websockets.Example.NetStandard.csproj" />
+  <Project Path="TwitchLib.EventSub.Websockets.Example/TwitchLib.EventSub.Websockets.Example.csproj" />
+  <Project Path="TwitchLib.EventSub.Websockets/TwitchLib.EventSub.Websockets.csproj" />
+</Solution>
