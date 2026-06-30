@@ -5,7 +5,7 @@
 	<PackageId>TwitchLib.EventSub.Websockets</PackageId>
     <Title>TwitchLib.EventSub.Websockets</Title>
 	<Authors>swiftyspiffy, Prom3theu5, Syzuna, LuckyNoS7evin</Authors>
-	<VersionPrefix>0.8.0</VersionPrefix>
+	<VersionPrefix>0.9.0</VersionPrefix>
 	<VersionSuffix>$(VersionSuffix)</VersionSuffix>
 	  <AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
 	<FileVersion>$(VersionPrefix)</FileVersion>
