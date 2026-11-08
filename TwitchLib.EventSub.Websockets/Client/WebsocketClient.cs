@@ -147,7 +147,7 @@ namespace TwitchLib.EventSub.Websockets.Client
                             if (payloadSize == 0)
                                 continue;
 
-                            OnDataReceived?.Invoke(this, new DataReceivedArgs { Bytes = store.AsSpan(0, payloadSize).ToArray() });
+                            _ = InvokeOnDataReceived(store.AsSpan(0, payloadSize).ToArray());
                             payloadSize = 0;
                             break;
                         case WebSocketMessageType.Binary:
@@ -164,6 +164,20 @@ namespace TwitchLib.EventSub.Websockets.Client
                 {
                     OnErrorOccurred?.Invoke(this, new ErrorOccuredArgs { Exception = ex });
                     break;
+                }
+            }
+
+            async Task InvokeOnDataReceived(byte[] bytes)
+            {
+                if (OnDataReceived is null)
+                    return;
+                try
+                {
+                    await OnDataReceived.Invoke(this, new DataReceivedArgs { Bytes = bytes }).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogExeption($"An error occurred invoking {nameof(OnDataReceived)} event", ex);
                 }
             }
         }

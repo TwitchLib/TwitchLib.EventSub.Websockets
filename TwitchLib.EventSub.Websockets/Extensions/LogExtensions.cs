@@ -11,10 +11,10 @@ namespace TwitchLib.EventSub.Websockets.Extensions
         const LogLevel LogMessageLogLevel = LogLevel.Debug;
 
         [LoggerMessage(LogLevel.Error, "{message}")]
-        public static partial void LogExeption(this ILogger<EventSubWebsocketClient> logger, string message, Exception ex);
+        public static partial void LogExeption(this ILogger logger, string message, Exception ex);
 
         [LoggerMessage(LogMessageLogLevel, "{message}")]
-        public static partial void LogMessage(this ILogger<EventSubWebsocketClient> logger, string message);
+        public static partial void LogMessage(this ILogger logger, string message);
 
         [LoggerMessage(LogLevel.Critical, "Websocket {sessionId} disconnected at {disconnectedAt}. Reason: {disconnectReason}")]
         public static partial void LogForceDisconnected(this ILogger<EventSubWebsocketClient> logger, string sessionId, DateTime? disconnectedAt, string disconnectReason);

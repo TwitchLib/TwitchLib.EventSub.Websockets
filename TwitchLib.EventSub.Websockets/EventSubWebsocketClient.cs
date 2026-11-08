@@ -147,6 +147,10 @@ namespace TwitchLib.EventSub.Websockets
         /// </summary>
         public event AsyncEventHandler<ChannelChatUserMessageUpdateArgs>? ChannelChatUserMessageUpdate;
         /// <summary>
+        /// Event that triggers on "channel.custom_power_up_redemption.add" notifications
+        /// </summary>
+        public event AsyncEventHandler<ChannelCustomPowerUpRedemptionAddV1Args>? CustomPowerUpRedemptionV1Add;
+        /// <summary>
         /// Event that triggers on "channel.cheer" notifications
         /// </summary>
         public event AsyncEventHandler<ChannelCheerArgs>? ChannelCheer;
@@ -754,6 +758,7 @@ namespace TwitchLib.EventSub.Websockets
                 ("channel.chat_settings.update", "1") => InvokeEventSubEvent<ChannelChatSettingsUpdateArgs, ChannelChatSettingsUpdate>(ChannelChatSettingsUpdate),
                 ("channel.chat.user_message_hold", "1") => InvokeEventSubEvent<ChannelChatUserMessageHoldArgs, ChannelChatUserMessageHold>(ChannelChatUserMessageHold),
                 ("channel.chat.user_message_update", "1") => InvokeEventSubEvent<ChannelChatUserMessageUpdateArgs, ChannelChatUserMessageUpdate>(ChannelChatUserMessageUpdate),
+                ("channel.custom_power_up_redemption.add", "1") => InvokeEventSubEvent<ChannelCustomPowerUpRedemptionAddV1Args, CustomPowerUpRedemptionV1>(CustomPowerUpRedemptionV1Add),
                 ("channel.shared_chat.begin", "1") => InvokeEventSubEvent<ChannelSharedChatSessionBeginArgs, ChannelSharedChatSessionBegin>(ChannelSharedChatSessionBegin),
                 ("channel.shared_chat.update", "1") => InvokeEventSubEvent<ChannelSharedChatSessionUpdateArgs, ChannelSharedChatSessionUpdate>(ChannelSharedChatSessionUpdate),
                 ("channel.shared_chat.end", "1") => InvokeEventSubEvent<ChannelSharedChatSessionEndArgs, ChannelSharedChatSessionEnd>(ChannelSharedChatSessionEnd),
