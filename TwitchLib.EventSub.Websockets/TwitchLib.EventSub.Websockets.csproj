@@ -32,7 +32,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
-    <PackageReference Include="TwitchLib.EventSub.Core" Version="3.1.0-preview.81.5919dce" />
+    <PackageReference Include="TwitchLib.EventSub.Core" Version="3.1.0" />
     <PackageReference Include="System.Text.Json" Version="10.0.0" />
   </ItemGroup>
 
