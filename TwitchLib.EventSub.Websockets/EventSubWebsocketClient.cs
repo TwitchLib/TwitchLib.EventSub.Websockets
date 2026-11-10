@@ -55,7 +55,7 @@ namespace TwitchLib.EventSub.Websockets
         public event AsyncEventHandler<RevocationArgs>? Revocation;
 
         /// <summary>
-        /// Event that triggers when EventSub send notification, that's unknown. (ie.: not implementet ... yet!)
+        /// Event that triggers when EventSub send notification, that's unknown. (i.e.: not implemented ... yet!)
         /// </summary>
         public event AsyncEventHandler<UnknownEventSubNotificationArgs>? UnknownEventSubNotification;
         /// <summary>
@@ -421,6 +421,8 @@ namespace TwitchLib.EventSub.Websockets
 
         private bool _reconnectRequested;
         private bool _reconnectComplete;
+        private CancellationTokenSource? _reconnectCts;
+        private bool _disconnectedNotified;
 
         private WebsocketClient _websocketClient;
 
@@ -442,7 +444,7 @@ namespace TwitchLib.EventSub.Websockets
         /// </summary>
         /// <param name="logger">Logger for the EventSubWebsocketClient</param>
         /// <param name="serviceProvider">DI Container to resolve other dependencies dynamically</param>
-        /// <param name="websocketClient">Underlying Websocket client to connect to connect to EventSub Websocket service</param>
+        /// <param name="websocketClient">Underlying Websocket client to connect to EventSub Websocket service</param>
         /// <exception cref="ArgumentNullException">Throws ArgumentNullException if a dependency is null</exception>
         public EventSubWebsocketClient(ILogger<EventSubWebsocketClient> logger, IServiceProvider serviceProvider, WebsocketClient websocketClient)
         {
@@ -484,17 +486,14 @@ namespace TwitchLib.EventSub.Websockets
         {
             url = url ?? new Uri(WEBSOCKET_URL);
             _lastReceived = DateTimeOffset.MinValue;
+            _disconnectedNotified = false;
 
             var success = await _websocketClient.ConnectAsync(url).ConfigureAwait(false);
 
             if (!success)
                 return false;
 
-            _cts = new CancellationTokenSource();
-
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            Task.Factory.StartNew(ConnectionCheckAsync, _cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            StartConnectionCheck();
 
             return true;
         }
@@ -505,7 +504,9 @@ namespace TwitchLib.EventSub.Websockets
         /// <returns>true: Disconnect successful false: Disconnect failed</returns>
         public async Task<bool> DisconnectAsync()
         {
+            _disconnectedNotified = true;
             _cts?.Cancel();
+            _reconnectCts?.Cancel();
             return await _websocketClient.DisconnectAsync().ConfigureAwait(false);
         }
 
@@ -529,7 +530,6 @@ namespace TwitchLib.EventSub.Websockets
 
             if (_reconnectRequested)
             {
-
                 var reconnectClient = _serviceProvider != null
                     ? _serviceProvider.GetRequiredService<WebsocketClient>()
                     : new WebsocketClient(_loggerFactory.CreateLogger<WebsocketClient>());
@@ -537,38 +537,82 @@ namespace TwitchLib.EventSub.Websockets
                 reconnectClient.OnDataReceived += OnDataReceived;
                 reconnectClient.OnErrorOccurred += OnErrorOccurred;
 
-                if (!await reconnectClient.ConnectAsync(url).ConfigureAwait(false))
-                    return false;
+                var reconnectCts = _reconnectCts ??= new CancellationTokenSource();
+                var reconnectSucceeded = false;
 
-
-                for (var i = 0; i < 200; i++)
+                try
                 {
-                    if (_cts == null || _cts.IsCancellationRequested)
-                        break;
+                    if (!await reconnectClient.ConnectAsync(url).ConfigureAwait(false))
+                        return false;
 
-                    if (_reconnectComplete)
+                    for (var i = 0; i < 200; i++)
                     {
-                        var oldRunningClient = _websocketClient;
-                        _websocketClient = reconnectClient;
+                        if (reconnectCts.IsCancellationRequested)
+                            break;
 
-                        if (oldRunningClient.IsConnected)
-                            await oldRunningClient.DisconnectAsync().ConfigureAwait(false);
-                        oldRunningClient.Dispose();
+                        if (_reconnectComplete)
+                        {
+                            var oldRunningClient = _websocketClient;
+                            _websocketClient = reconnectClient;
 
-                        await WebsocketReconnected.InvokeAsync(this, new()).ConfigureAwait(false);
+                            oldRunningClient.OnDataReceived -= OnDataReceived;
+                            oldRunningClient.OnErrorOccurred -= OnErrorOccurred;
+
+                            if (oldRunningClient.IsConnected)
+                                await oldRunningClient.DisconnectAsync().ConfigureAwait(false);
+                            oldRunningClient.Dispose();
+
+                            reconnectSucceeded = true;
+
+                            _reconnectRequested = false;
+                            _reconnectComplete = false;
+                            _reconnectCts = null;
+                            _disconnectedNotified = false;
+
+                            StartConnectionCheck();
+
+                            await WebsocketReconnected.InvokeAsync(this, new WebsocketReconnectedArgs()).ConfigureAwait(false);
+
+                            return true;
+                        }
+
+                        await Task.Delay(100, reconnectCts.Token).ConfigureAwait(false);
+                    }
+
+                    _logger.LogReconnectFailed(SessionId);
+
+                    return false;
+                }
+                finally
+                {
+                    if (!reconnectSucceeded)
+                    {
+                        reconnectClient.OnDataReceived -= OnDataReceived;
+                        reconnectClient.OnErrorOccurred -= OnErrorOccurred;
+
+                        try
+                        {
+                            if (reconnectClient.IsConnected)
+                                await reconnectClient.DisconnectAsync().ConfigureAwait(false);
+                        }
+                        catch
+                        {
+
+                        }
+
+                        reconnectClient.Dispose();
 
                         _reconnectRequested = false;
                         _reconnectComplete = false;
+                        _reconnectCts = null;
 
-                        return true;
+                        if (!_disconnectedNotified && !_websocketClient.IsConnected)
+                        {
+                            _disconnectedNotified = true;
+                            await WebsocketDisconnected.InvokeAsync(this, new WebsocketDisconnectedArgs()).ConfigureAwait(false);
+                        }
                     }
-
-                    await Task.Delay(100).ConfigureAwait(false);
                 }
-
-                _logger.LogReconnectFailed(SessionId);
-
-                return false;
             }
 
             if (_websocketClient.IsConnected)
@@ -586,9 +630,24 @@ namespace TwitchLib.EventSub.Websockets
             if (!await ConnectAsync().ConfigureAwait(false))
                 return false;
 
-            await WebsocketReconnected.InvokeAsync(this, new()).ConfigureAwait(false);
+            await WebsocketReconnected.InvokeAsync(this, new WebsocketReconnectedArgs()).ConfigureAwait(false);
 
             return true;
+        }
+
+        /// <summary>
+        /// Starts the background connection health check for the current websocket client.
+        /// </summary>
+        private void StartConnectionCheck()
+        {
+            _cts?.Cancel();
+
+            var cts = _cts = new CancellationTokenSource();
+            var client = _websocketClient;
+
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            Task.Factory.StartNew(() => ConnectionCheckAsync(client, cts), cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
         /// <summary>
@@ -596,25 +655,43 @@ namespace TwitchLib.EventSub.Websockets
         /// <para>E.g. a Twitch specified 10 seconds minimum frequency would result in 12 seconds used by the client to honor network latencies and so on.</para>
         /// </summary>
         /// <returns>a Task that represents the background operation</returns>
-        private async Task ConnectionCheckAsync()
+        private async Task ConnectionCheckAsync(WebsocketClient client, CancellationTokenSource cts)
         {
-            while (_cts != null && _websocketClient.IsConnected && !_cts.IsCancellationRequested)
+            try
             {
-                if (_lastReceived != DateTimeOffset.MinValue)
-                    if (_keepAliveTimeout != TimeSpan.Zero)
-                        if (_lastReceived.Add(_keepAliveTimeout) < DateTimeOffset.Now)
-                            break;
+                while (!cts.IsCancellationRequested && ReferenceEquals(client, _websocketClient) && client.IsConnected)
+                {
+                    if (_lastReceived != DateTimeOffset.MinValue)
+                        if (_keepAliveTimeout != TimeSpan.Zero)
+                            if (_lastReceived.Add(_keepAliveTimeout) < DateTimeOffset.Now)
+                                break;
 
-                await Task.Delay(TimeSpan.FromSeconds(1), _cts.Token).ConfigureAwait(false);
+                    await Task.Delay(TimeSpan.FromSeconds(1), cts.Token).ConfigureAwait(false);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                return;
             }
 
-            await DisconnectAsync().ConfigureAwait(false);
+            if (!ReferenceEquals(client, _websocketClient) || _disconnectedNotified)
+                return;
+            
+            var reconnectRequested = _reconnectRequested;
 
-            await WebsocketDisconnected.InvokeAsync(this, new()).ConfigureAwait(false);
+            cts.Cancel();
+            await client.DisconnectAsync().ConfigureAwait(false);
+
+            if (reconnectRequested || !ReferenceEquals(client, _websocketClient) || _disconnectedNotified)
+                return;
+
+            _disconnectedNotified = true;
+
+            await WebsocketDisconnected.InvokeAsync(this, new WebsocketDisconnectedArgs()).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// AsyncEventHandler for the DataReceived event from the underlying websocket. This is where every notification that gets in gets handled"/>
+        /// AsyncEventHandler for the DataReceived event from the underlying websocket. This is where every notification that gets in gets handled/>
         /// </summary>
         /// <param name="sender">Sender of the event. In this case <see cref="WebsocketClient"/></param>
         /// <param name="e">EventArgs send with the event. <see cref="DataReceivedArgs"/></param>
@@ -661,7 +738,7 @@ namespace TwitchLib.EventSub.Websockets
         }
 
         /// <summary>
-        /// AsyncEventHandler for the ErrorOccurred event from the underlying websocket. This handler only serves as a relay up to the user code"/>
+        /// AsyncEventHandler for the ErrorOccurred event from the underlying websocket. This handler only serves as a relay up to the user code/>
         /// </summary>
         /// <param name="sender">Sender of the event. In this case <see cref="WebsocketClient"/></param>
         /// <param name="e">EventArgs send with the event. <see cref="ErrorOccuredArgs"/></param>
@@ -677,8 +754,15 @@ namespace TwitchLib.EventSub.Websockets
         {
             _ = metadata;
             _logger.LogReconnectRequested(SessionId);
+
+            if (_reconnectRequested)
+                return;
+
             var data = JsonSerializer.Deserialize<EventSubWebsocketSessionInfoPayload>(payload, _jsonSerializerOptions);
+
+            _reconnectCts = new CancellationTokenSource();
             _reconnectRequested = true;
+            _reconnectComplete = false;
 
             Task.Run(async () => await ReconnectAsync(new Uri(data?.Session.ReconnectUrl ?? WEBSOCKET_URL)).ConfigureAwait(false));
         }
